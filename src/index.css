@@ -634,3 +634,26 @@
     padding: 1px 2px;
   }
 }
+/* ONLY touch the Āpitihanga (extras) column */
+.extras-column .extra-row {
+  height: 43px;               /* force consistent row height */
+  display: flex;
+  align-items: center;
+}
+
+.extras-column .extra-row .skill-extra {
+  height: 100%;
+  line-height: 26px;
+  font-size: 14px;
+  padding: 0 6px;
+  box-sizing: border-box;
+}
+/* Optional: adjust on mobile separately */
+@media (max-width: 640px) {
+  .extras-column .extra-row { height: 14.7px; }
+  .extras-column .extra-row .skill-extra {
+    line-height: 24px;
+    font-size: 10px;
+    padding: 8px;
+  }
+}
