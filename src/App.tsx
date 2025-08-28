@@ -33,12 +33,7 @@ const SPECIES_IMG: Record<string, string> = {
 };
 
 // All available skills (edit names to match your sheet exactly)
-const SKILLS = [
-  "Tokatūmoana | Endurance", "Manawa-tītī | Strength", "Waewae-kai-kapua | Agility", "He Rūrū Mōhio | Intelligence",
-  "Ngutu-kākā | Charisma", "He Pātiki Huna | Stealth", "Korokoro-tūī | Kaikōrero/Linguist", "Puawai Kōwhai | Naturalist",
-  "Manawa Piharau | Mental Fortitude", "He Ihu Waka | Matakite/Spirit Sight", "Hiku o te Ika | Strike", "Ika Ūnahi Nui | Block",
-  "Karaka Matarua | Rongoā/Potions & Poisons", "Mahi Pūngāwerewere | Craftsmanship", "He Whatu Ariki | Takutaku/Wards", "He Tuhi Hara | Makutu/Curses"
-] as const;
+
 
   // --- Skill catalogue (edit these to your real 16 names) ---
 const ALL_SKILLS = [
