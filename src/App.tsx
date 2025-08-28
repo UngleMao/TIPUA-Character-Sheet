@@ -39,7 +39,7 @@ const SKILLS = [
   "Manawa Piharau | Mental Fortitude", "He Ihu Waka | Matakite/Spirit Sight", "Hiku o te Ika | Strike", "Ika Ūnahi Nui | Block",
   "Karaka Matarua | Rongoā/Potions & Poisons", "Mahi Pūngāwerewere | Craftsmanship", "He Whatu Ariki | Takutaku/Wards", "He Tuhi Hara | Makutu/Curses"
 ] as const;
-type SkillName = typeof SKILLS[number];
+
   // --- Skill catalogue (edit these to your real 16 names) ---
 const ALL_SKILLS = [
   "Tokatūmoana | Endurance",
@@ -255,7 +255,6 @@ useEffect(() => {
 
 
 // === DICE STATE ===
-const [mod, setMod] = useState(0);
 const [roll, setRoll] = useState<{ dice: number[]; total: number; mod: number } | null>(null);
 const [diceN, setDiceN] = useState(4);
 const [isRolling, setIsRolling] = useState(false);
