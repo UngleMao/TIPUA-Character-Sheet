@@ -1,0 +1,636 @@
+/* SHEET LAYOUT */
+.sheet-wrap { max-width: 980px; margin: 16px auto; padding: 8px; }
+.sheet{
+  position: relative;      /* parent for absolute fields */
+  width: 100%;
+  aspect-ratio: 210 / 320;
+  background: #f9f7f2;
+  overflow: hidden;
+}
+.sheet > img{
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: fill;       /* try 'contain' if your export has margin */
+  pointer-events: none; user-select: none;
+}
+
+/* Each overlay field */
+.field{
+  position: absolute;      /* keep absolute! */
+  /* (no translateY now) */
+}
+
+/* Title ABOVE the input (container) */
+.field-label{
+  display: block;          /* forces input below the title */
+  line-height: 1.05;
+  margin-bottom: 4px;
+  font-family: "Noto Sans", Arial, sans-serif; /* or your booklet font */
+  font-size: 14px;         /* tweak to match your art */
+  letter-spacing: 0.2px;
+}
+
+/* Split colour styles */
+.label-white { color: #fff; font-weight: 700; }   /* bold white */
+.label-black { color: #222; font-weight: 400; }   /* regular dark */
+
+/* Input styles */
+.input-underline{
+  width: 100%;             /* full width under the title */
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid #0006;
+  padding: 2px 4px;
+  font: inherit;
+  outline: none;
+}
+.num{ width: 56px; text-align: center; } /* Underlined select to match inputs */
+.select-underline {
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid #0006;
+  padding: 2px 2px 3px 2px; /* a hair more bottom padding looks better */
+  font: inherit;
+  outline: none;
+  appearance: none;        /* cleaner look */
+}
+
+
+/* Debug outline for placement */
+.debug-outline .field{ outline: 1px dashed #3aa3ff99; outline-offset: 2px; }
+
+/* Panels / buttons / dice (keep as-is) */
+.panel{
+  max-width: 980px; margin: 12px auto; padding: 12px;
+  border: 1px solid #e2d9cc00; border-radius: 10px; background: #55576600;
+}
+.btn{ padding: 6px 10px; border:1px solid #d9cfc4; border-radius:8px; background:#fff; cursor:pointer;  }
+.btn:active{ transform: translateY(1px); }
+.dice{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+.die{ width:36px; height:36px; display:grid; place-items:center; border:1px solid #d9cfc4; border-radius:8px; background:#fff; font-weight:700; font-size:20px; }
+/* Bigger titles/inputs for the top identity block */
+.field--lg .field-label {
+  font-size: clamp(15px, 2vw, 19px);
+}
+.field--lg .input-underline,
+.field--lg .select-underline {
+  font-size: clamp(15px, 2vw, 19px);
+  padding: 5px 4px;
+  border-bottom-width: 3px;
+}
+
+/* ===== Mobile tuning (phones) ===== */
+@media (max-width: 640px) {
+  html, body { margin: 0; padding: 0; }
+  .sheet-wrap { max-width: 100vw; margin: 0; padding: 0; }
+
+  .sheet {
+    position: relative;
+    width: 100vw;
+    height: auto;
+    aspect-ratio: auto;
+    background: #000;
+    overflow: visible;
+  }
+  .sheet > img {
+    position: relative;
+    inset: auto;
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    display: block;
+  }
+
+  /* Compact the identity fields */
+  .field--lg .field-label {
+    font-size: clamp(11px, 3.2vw, 15px);
+    line-height: 1.05;
+    margin-bottom: 2px;
+  }
+  .field--lg .input-underline,
+  .field--lg .select-underline {
+    font-size: clamp(11px, 3.2vw, 15px);
+    padding: 2px 3px 3px 3px;
+    border-bottom-width: 1px;
+  }
+
+  /* General inputs a touch smaller */
+  .input-underline,
+  .select-underline {
+    font-size: clamp(11px, 3.1vw, 15px);
+    padding: 2px 3px 3px 3px;
+  }
+
+  /* Super condensed option */
+  .field--compact .field-label {
+    font-size: clamp(9px, 2.2vw, 11px);
+    line-height: 1.0;
+    margin-bottom: 0;
+    letter-spacing: 0.1px;
+  }
+  .field--compact .input-underline,
+  .field--compact .select-underline {
+    font-size: clamp(9px, 2.3vw, 11px);
+    padding: 0 2px 1px 2px;
+    border-bottom-width: 1px;
+  }
+}
+
+/* Dice: compact panel */
+.dice-compact { display: grid; gap: 8px; align-items: center; max-width: 320px; }
+.dice-control { display: flex; gap: 6px; align-items: center; }
+.dice-input { width: 64px; text-align: center; border: 1px solid #d9cfc4; border-radius: 8px; padding: 6px; }
+@media (max-width: 640px) { .dice-compact { max-width: 280px; } }
+
+/* Roll animation */
+@keyframes wobble {
+  0% { transform: translateY(0) rotate(0deg); }
+  25%{ transform: translateY(-4px) rotate(6deg); }
+  50%{ transform: translateY(0) rotate(0deg); }
+  75%{ transform: translateY(-4px) rotate(-6deg); }
+  100%{ transform: translateY(0) rotate(0deg); }
+}
+.die.rolling { animation: wobble 0.7s ease-in-out infinite; }
+
+/* Inputs / textareas slightly opaque */
+.input-underline,
+.select-underline,
+.textarea-underline {
+  width: 100%;
+  border: none;
+  border-bottom: 2px solid #000;
+  background: rgba(255, 255, 255, 0.5);
+  font-size: 14px;
+  font-family: inherit;
+  outline: none;
+  line-height: 1.3;
+  padding: 2px 4px;
+  border-radius: 4px;
+  resize: none;
+}
+
+/* Mini labels above small boxes */
+.mini-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  margin: 4px 0 2px;
+  color: #333;
+  opacity: 0.8;
+}
+
+/* Species image fade-in */
+.field img { animation: fadeIn 200ms ease-out; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(2px);} to { opacity: 1; transform: translateY(0);} }
+@media (max-width: 640px) { .field img { max-height: 22vh; object-fit: contain; } }
+
+/* === SKILLS (two-column layout) === */
+/* Titles */
+.title .field-label { margin: 0; font-weight: 700; }
+.title--skills .field-label { font-size: clamp(14px, 2.2vw, 20px); }
+.title--skillsMod .field-label {
+  font-size: clamp(8px, 1.2vw, 12px); /* smaller than SKILLS */
+  line-height: 1.1;
+  text-align: right;
+}
+
+
+/* Left column: dropdowns (rendered inside .skills-column) */
+.skills-column .skill-row { margin-bottom: 6px; }
+.skills-column select { display: block; width: 100%; }
+
+/* Right column: fixed base + extra input */
+.extras-column .extra-row {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 6px;
+}
+
+.skill-extra {
+  width: 50px; text-align: center; padding: 12.8px 2px;
+  border: 1px solid #96d5ff; border-radius: 6px; background: #ffffff9d;
+   margin-left: auto; /* pushes it to right edge */
+}
+/* One row for each skill: dropdown + fixed base value */
+.skill-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;          /* space between dropdown and base value */
+  margin-bottom: 8px;
+  width: 400px;
+
+  
+}
+.skill-row select {
+  padding: 9.2px 10px;   /* same as .skill-base */
+}
+
+
+/* If you want the base value centered (recommended for readability) */
+.skill-base {
+  width: 30px;
+  text-align: center;   /* <-- was right; center looks nicer */
+  padding: 10px 10px;
+  border: 1px solid #90d9f7;
+  border-radius: 6px;
+  background: #dadada;
+  font-weight: 900;
+}
+.skills-column select {
+  display: block;
+  width: 100%;
+  font-size: 18px;   /* 🔑 tweak this up or down */
+}
+
+@media (max-width: 600px) {
+  /* Normal Āhei boxes */
+  .textarea-underline.ahei {
+    height: 40px !important;   /* adjust just for mobile */
+    min-height: 0 !important;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    line-height: 1;
+  }
+
+  /* Ultimate Āhei boxes */
+  .textarea-underline.ultimate {
+    height: 37px !important;   /* tweak separately */
+    min-height: 0 !important;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    line-height: 1.15;
+  }
+}
+@media (max-width: 640px) {
+  .ult-label {
+    font-size: 8px !important;   /* or tweak value */
+    line-height: 1.1;
+    color: #222;                  /* optional: ensure visible */
+  }
+}
+/* default / desktop */
+:root {
+  --ult-label-size: 12px;
+}
+
+/* mobile override */
+@media (max-width: 640px) {
+  :root {
+    --ult-label-size: 12px;
+  }
+  /* just in case something super-specific tries to override */
+  .ult-label { line-height: 1.1; color: #222; }
+}
+/* Mobile only: smaller user input text in Āhei and Ultimate boxes */
+@media (max-width: 640px) {
+  .textarea-underline.ahei {
+    font-size: 8px;   /* tweak this down */
+    line-height: 1.2;
+  }
+  .textarea-underline.ultimate {
+    font-size: 8px;   /* tweak this separately if needed */
+    line-height: 1.2;
+  }
+}
+@media (max-width: 640px) {
+  .textarea-underline.ahei {
+    width: 87.5% !important;
+  }
+}
+/* Mobile only: Ultimate input box tweaks */
+@media (max-width: 640px) {
+  .textarea-underline.ultimate {
+    width: 70% !important;   /* controls width */
+    height: 60px;            /* fixed height, tweak as needed */
+    font-size: 12px;         /* smaller input font if desired */
+    line-height: 1.2;        /* adjust spacing inside */
+  }
+}
+/* Mobile only: scale skills section */
+@media (max-width: 640px) {
+  .skills-column select {
+    font-size: 6px;       /* shrink dropdown text */
+    padding: 2px 2px;      /* reduce height */
+  }
+
+  .skill-base {
+    width: 15px;           /* narrower base box */
+    font-size: 8px;       /* smaller number text */
+    padding: 2px;          /* smaller height */
+  }
+
+  .skill-row {
+    gap: 2px;              /* less horizontal spacing */
+    margin-bottom: px;    /* tighter vertical spacing */
+    width: 160%;            /* shrink row width */
+  }
+}
+/* Mobile only: scale down SKILLS title */
+@media (max-width: 640px) {
+  .title--skills .field-label {
+    font-size: clamp(10px, 3vw, 14px); /* smaller text */
+    line-height: 1.1;                  /* tighten vertical spacing */
+  }
+}
+
+/* Mobile only: scale down Āpitihanga modifier boxes */
+@media (max-width: 640px) {
+  .skill-extra {
+    width: 10px;           /* make them narrower */
+    font-size: 8px;       /* smaller text */
+    padding: 2px 3px;      /* reduce padding for height */
+  }
+}
+/* Base stress title size (desktop default) */
+.title--stress .field-label {
+  font-size: clamp(18px, 2.0vw, 18px);
+  line-height: 1.05;
+  margin: 0;
+}
+
+/* Mobile: scale them down independently if you want */
+@media (max-width: 640px) {
+  .title--stress .field-label {
+    font-size: clamp(11px, 3.2vw, 14px);
+  }
+
+  /* Optional per-title overrides on mobile */
+  .title--tinana   .field-label {  font-size: 10px;  }
+  .title--hinengaro.field-label {  font-size: 10px;  }
+  .title--wairua   .field-label {  font-size: 10px;  }
+}
+@media (max-width: 640px) {
+  .title--hinengaro .field-label {
+    font-size: 10px;
+  }
+}
+.title--number .field-label {
+  font-size: 1.4rem;   /* adjust size */
+  font-weight: 700;
+  text-align: left;    /* or center */
+}
+@media (max-width: 640px) {
+  .title--number .field-label {
+    font-size: clamp(10px, 3vw, 14px);
+  }
+}
+.stress-row {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* 2 columns */
+  gap: 6px;
+}
+
+.stress-box {
+  width: 22px;
+  height: 22px;
+  border: 2px solid #73ccff;
+  border-radius: 4px;
+  background: #fff;
+  cursor: pointer;
+}
+
+.stress-box.checked {
+  background: #73deff;
+}
+
+/* Mobile override */
+@media (max-width: 640px) {
+  .stress-box {
+    width: 13px;   /* adjust as needed */
+    height: 13px;  /* adjust as needed */
+  }
+}
+
+.title--consequences .field-label {
+  font-size: clamp(14px, 2vw, 20px); /* adjust to match others */
+  line-height: 1.1;
+}
+@media (max-width: 640px) {
+  .title--consequences .field-label {
+    font-size: clamp(10px, 3vw, 14px); /* smaller for mobile */
+  }
+}.roll-btn {
+  width: 170px; /* or width: 160px if you want fixed size */
+  font-weight: 600; /* optional, to make it stand out */
+}
+@media (max-width: 600px) {
+  .roll-btn {
+    min-width: 165px; /* bigger on mobile */
+  }
+}
+/* Mobile: let content (incl. dice) set the height.
+   The background image is absolutely positioned and stretched to the
+   full height of .sheet via inset:0, so it always covers the taller sheet. */
+@media (max-width: 640px) {
+  .sheet > img {
+    content: url("/Background-mobile.png");
+  }
+}
+
+@media (max-width: 640px) {
+  .panel {
+    max-width: 85vw;      /* shrink width to fit smaller screens */
+    padding: 2px;         /* reduce padding */
+  }
+
+  .dice-compact {
+    gap: 4px;             /* less space between controls */
+    max-width: 240px;     /* smaller container */
+  }
+
+  .dice-input {
+    width: 48px;          /* narrower number input */
+    padding: 4px;         /* tighter padding */
+  }
+
+  .btn {
+    padding: 4px 6px;     /* smaller buttons in general */
+    font-size: 12px;
+  }
+
+  .roll-btn {
+    font-size: 14px;      /* shrink roll button text */
+    padding: 6px 8px;    /* smaller footprint */
+    width: 10px;          /* let it shrink naturally */
+  }
+}
+/* Container the dice will scatter inside */
+.dice-scatter {
+  position: relative;
+  width: 200px;   /* tweak to the space you have */
+  height: 120px;  /* tweak to the space you have */
+}
+
+/* Where to print the total */
+.dice-total {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  font-size: 16px;
+}
+
+/* Toss animation (from a small “throw” to final scattered offsets) */
+@keyframes toss {
+  0% {
+    opacity: 0;
+    transform: translate(0, -24px) rotate(var(--rz, -25deg)) scale(0.9);
+  }
+  70% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+    transform: translate(var(--dx, 0px), var(--dy, 0px)) rotate(0deg) scale(1);
+  }
+}
+
+/* Apply this after the roll is settled */
+.die.toss-in {
+  animation: toss 500ms cubic-bezier(.2,.7,.2,1) both;
+}
+
+/* Optional: smaller scatter area on phones */
+@media (max-width: 640px) {
+  .dice-scatter {
+    width: 160px;
+    height: 100px;
+  }
+}
+.dice-compact { display: flex; gap: 12px; align-items: flex-start; }
+
+@keyframes toss {
+  0%   { transform: translateY(-16px) rotate(-8deg); opacity: .7; }
+  60%  { transform: translateY(0) rotate(0deg);      opacity: 1; }
+  100% { transform: translateY(0) rotate(0deg);      opacity: 1; }
+}
+.die.toss { animation: toss .45s ease-out; }
+
+
+.dice-area {
+  position: relative;
+  width: 320px;   /* tune */
+  height: 220px;  /* tune */
+}
+/* transparent panel to match your sheet */
+.panel--ghost {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+}
+
+/* the dice “stage” */
+.dice-area {
+  position: relative;
+  width: 320px;   /* tune for desktop */
+  height: 200px;  /* tune for desktop */
+  margin: 8px 0 0;
+}
+
+/* space where dice can land (keeps clear of the button area) */
+.scatter-surface {
+  position: absolute;
+  left: 8px; right: 8px;
+  top: 8px; bottom: 56px; /* reserve space for the button */
+  pointer-events: none;   /* clicks pass through */
+}
+
+/* keep the roll button anchored */
+.dice-area .roll-btn {
+  position: absolute;
+  left: 50%;
+  bottom: 8px;
+  transform: translateX(-50%);
+  z-index: 2;
+}
+
+/* total in top-right of the dice area */
+.dice-total {
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  font-size: 16px;
+  z-index: 2;
+}
+
+/* mobile tuning */
+@media (max-width: 640px) {
+  .dice-area { width: 260px; height: 180px; }
+  .scatter-surface { left: 6px; right: 6px; top: 6px; bottom: 52px; }
+}
+.consequence-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border: 2px solid #111;
+  border-radius: 6px;
+  background: #fff;         /* overridden per-box via inline style */
+}
+
+.consequence-label {
+  font-weight: 800;
+  letter-spacing: 0.2px;
+  white-space: nowrap;
+}
+
+.consequence-input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  font: inherit;
+  padding: 2px 0;
+}
+
+.consequence-color {
+  width: 26px;
+  height: 26px;
+  border: none;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+}
+
+/* (Optional) make them a bit tighter on phones */
+@media (max-width: 640px) {
+  .consequence-box { padding: 4px 6px; border-width: 1.5px; }
+  .consequence-color { width: 22px; height: 22px; }
+}
+.consequence-box {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 4px;
+  border-radius: 4px;
+}
+
+.consequence-label {
+  font-weight: 600;
+  margin-right: 4px;
+}
+
+.consequence-input {
+  flex: 1;
+  border: none;
+  border-bottom: 1px solid #333;
+  background: transparent;
+  padding: 2px 3px;
+}
+@media (max-width: 640px) {
+  .consequence-box {
+    padding: 1px 2px;       /* tighter padding */
+    gap: 4px;               /* reduce spacing */
+  }
+
+  .consequence-label {
+    font-size: 10px;        /* smaller subtitle */
+  }
+
+  .consequence-input {
+    font-size: 10px;
+    padding: 1px 2px;
+  }
+}
