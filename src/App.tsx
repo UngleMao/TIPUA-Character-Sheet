@@ -156,55 +156,48 @@ const [hasLoaded, setHasLoaded] = useState(false);
 
 // LOAD once
 useEffect(() => {
- const saved = loadJSON<{
-  // existing sheet fields
-  name?: string; race?: string; origin?: string; house?: string; weapon?: string;
-  ahei1?: string; ahei2?: string; ahei3?: string;
-  ult1?: string;  ult2?: string;  ult3?: string;
+  const saved = loadJSON<{
+    name?: string; race?: string; origin?: string; house?: string; weapon?: string;
+    ahei1?: string; ahei2?: string; ahei3?: string;
+    ult1?: string;  ult2?: string;  ult3?: string;
+    skillChoices?: string[];
+    skillExtras?: number[];
+    tinanaRow1?: boolean[]; tinanaRow2?: boolean[];
+    hineRow1?:   boolean[]; hineRow2?:   boolean[];
+    wairuaRow1?: boolean[]; wairuaRow2?: boolean[];
+    consMild?: string;
+    consModerate?: string;
+    consSevere?: string;
+  }>(STORAGE_KEY_SHEET);
 
-  // skills
-  skillChoices?: string[];
-  skillExtras?: number[];
+  if (saved) {
+    if (saved.name   != null) setName(saved.name);
+    if (saved.race   != null) setRace(saved.race);
+    if (saved.origin != null) setOrigin(saved.origin);
+    if (saved.house  != null) setHouse(saved.house);
+    if (saved.weapon != null) setWeapon(saved.weapon);
+    if (saved.ahei1  != null) setAhei1(saved.ahei1);
+    if (saved.ahei2  != null) setAhei2(saved.ahei2);
+    if (saved.ahei3  != null) setAhei3(saved.ahei3);
+    if (saved.ult1   != null) setUlt1(saved.ult1);
+    if (saved.ult2   != null) setUlt2(saved.ult2);
+    if (saved.ult3   != null) setUlt3(saved.ult3);
 
-  // stress trackers
-  tinanaRow1?: boolean[]; tinanaRow2?: boolean[];
-  hineRow1?:   boolean[]; hineRow2?:   boolean[];
-  wairuaRow1?: boolean[]; wairuaRow2?: boolean[];
+    if (Array.isArray(saved.skillChoices)) setSkillChoices(saved.skillChoices);
+    if (Array.isArray(saved.skillExtras))  setSkillExtras(saved.skillExtras);
 
-  // consequences
-  consMild?: string;
-  consModerate?: string;
-  consSevere?: string;
- 
-}>(STORAGE_KEY_SHEET);
+    if (Array.isArray(saved.tinanaRow1)) setTinanaRow1(saved.tinanaRow1);
+    if (Array.isArray(saved.hineRow1))   setHineRow1(saved.hineRow1);
+    if (Array.isArray(saved.wairuaRow1)) setWairuaRow1(saved.wairuaRow1);
 
+    if (saved.consMild  != null) setConsMild(saved.consMild);
+    if (saved.consModerate != null) setConsModerate(saved.consModerate);
+    if (saved.consSevere   != null) setConsSevere(saved.consSevere);
+  }
 
-  if (!saved) return;
-  if (saved.name   != null) setName(saved.name);
-  if (saved.race   != null) setRace(saved.race);
-  if (saved.origin != null) setOrigin(saved.origin);
-  if (saved.house  != null) setHouse(saved.house);
-  if (saved.weapon != null) setWeapon(saved.weapon);
-  if (saved.ahei1  != null) setAhei1(saved.ahei1);
-  if (saved.ahei2  != null) setAhei2(saved.ahei2);
-  if (saved.ahei3  != null) setAhei3(saved.ahei3);
-  if (saved.ult1   != null) setUlt1(saved.ult1);
-  if (saved.ult2   != null) setUlt2(saved.ult2);
-  if (saved.ult3   != null) setUlt3(saved.ult3);
-  if (Array.isArray(saved.skillChoices)) setSkillChoices(saved.skillChoices);
-  if (Array.isArray(saved.skillExtras))  setSkillExtras(saved.skillExtras); // <-- add this
-
-if (Array.isArray(saved.tinanaRow1)) setTinanaRow1(saved.tinanaRow1);
-if (Array.isArray(saved.hineRow1))   setHineRow1(saved.hineRow1);
-if (Array.isArray(saved.wairuaRow1)) setWairuaRow1(saved.wairuaRow1);
-if (saved.consMild  != null) setConsMild(saved.consMild);
-if (saved.consModerate != null) setConsModerate(saved.consModerate);
-if (saved.consSevere != null) setConsSevere(saved.consSevere);
-
-setHasLoaded(true); // ✅ done loading
-
-
+  setHasLoaded(true); // ✅ ALWAYS set this, even if nothing was saved
 }, []);
+
 
 // SAVE on change
 useEffect(() => {
