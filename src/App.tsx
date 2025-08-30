@@ -31,6 +31,172 @@ const SPECIES_IMG: Record<string, string> = {
   "Pōnāturi | Sea Folk": "/species/ponaturi.png",
   "Patupaiārehe | Forest Folk": "/species/patupaiarehe.png",
 };
+type InheritedAhei = { id: string; title: string; desc: string };
+
+const SPECIES_AHEI: Record<string, InheritedAhei[]> = {
+  "Patupaiārehe | Forest Folk": [
+    {
+      id: "huna-a-taiao",
+      title: "Huna ā Taiao | Hidden in Nature",
+      desc: "You are hard to spot in natural cover. You blend with plants, mist, and shadow, and you move quietly through the bush +2 Block +2 Stealth - when partly hidden. ONCE PER SESSION: Fully vanish to move or escape. ",
+    },
+    {
+      id: "taurangi-orooro",
+      title: "Taurangi Orooro | Voice of Harmony",
+      desc: "Your voice carries a calming, melodic resonance. You can steady allies, ease tensions, and turn hostility aside. +1 Charisma +1 Kaikōrero +1 Takutaku +1 Makutu. ONCE PER SESSION: Captivate one low level NPC for a turn with your voice - they will do as you command ",
+    },
+  ],
+  "Tangata | Human Folk": [
+    {
+      id: "reo-tupuna",
+      title: "Reo Tūpuna | Ancestral Voice",
+      desc: "You carry the strength of your tīpuna. You recall old knowledge, speak with conviction, and inspire resolve. +2 Intelligence +1 Kaikōrero +1 Matakite. ONCE PER SESSION: Call on an ancestor spirit to reveal something hidden or help in battle for one turn",
+    },
+    {
+      id: "ringa-toi",
+      title: "Ringa Toi | Hand of the Maker",
+      desc: "You are a maker and problem solver. You adapt tools, repair on the fly, and craft useful solutions under pressure. +1 Endurance +1 Strength +1 Crafstmanship. +2 Matakite -when interacting with carvings or built spaces. ONCE PER SESSION: Use a passed-down karakia to imbue an object with a Ward or Curse",
+    },
+  ],
+  "Pōnāturi | Sea Folk": [
+    {
+      id: "noho-rua",
+      title: "Noho-rua | Lives in Two Worlds",
+      desc: "You move between realms of sea and shore. You read tides, currents, and liminal signs with sharp instinct. While in water +1 Stealth +1 Agility and clear vision. ONCE PER SESSION: Send a deep pulse through the water, knocking nearby enemies off balance",
+    },
+    {
+      id: "kiri-matotoru",
+      title: "Kiri Mātotoru | Thick Skin",
+      desc: "Your hide is tough and weathered. You endure cold, pressure, and blows that would stagger others. +2 Endurance +2 Block unaffected by environmental conditions. ONCE PER SESSION: Let out a challenging growl that draws all attacks to you - taking only half damage for one turn",
+    },
+  ],
+};
+// ---- Types for Ira + Origin ----
+type RaceKey = keyof typeof SPECIES_AHEI;  // "Patupaiārehe | Forest Folk" | ...
+
+export const ORIGIN_OPTIONS = [
+  "Papakāinga | Village",
+  "Pokapū | City",
+  "Mōwaho | Outskirts",
+] as const;
+
+type OriginKey = typeof ORIGIN_OPTIONS[number];
+
+type OriginAheiMap = Record<RaceKey, Record<OriginKey, InheritedAhei[]>>;
+
+
+
+// 🔧 EXAMPLE content — tweak/expand per your game
+export const ORIGIN_AHEI: OriginAheiMap = {
+  "Patupaiārehe | Forest Folk": {
+    "Papakāinga | Village": [
+      { id: "pf-vil-1", title: "Rikoriko | Glimmer in the Dark", desc: "In a forest that never sees full daylight, you were raised among red leaves and moonlit hunts. Here, your teachers were silence and shadow, and your kin, the masters of camouflage and disguise. Living in near darkness you learnt to hunt by your own light. ONCE PER SESSION: emit a bioluminescent pulse that confuses your closest enemies, drawing them in unguarded. +1 Matakite +1 Naturalist." },
+    ],
+    "Pokapū | City": [
+      { id: "pf-city-1", title: "Kākāriki | Voice of the Parrot", desc: "High in the canopy of a living giant, among the many voices and diverse visages, you ran as one of the unseen children and vanished from sight before you ever learned to speak. You honed your skills without being caught, the overlapping voices became your camouflage. ONCE PER SESSION: mimic an NPC voice to create a distraction or an opportunity. +2 Stealth when out of cover" },
+    ],
+    "Mōwaho | Outskirts": [
+      { id: "pf-out-1", title: "Pāpaki | Tinkerer's Touch", desc: "Your home groaned with metal and fire. Raised beneath choking smog and bleeding roots, you worked before you walked, earning your breath in the grind. Your understanding of machinery gave you an edge. ONCE PER SESSION: repair or wreck any powered object or structure. +1 Intelligence +1 endurance +1 Craftsmanship" },
+    ],
+  },
+  "Tangata | Human Folk": {
+    "Papakāinga | Village": [
+      { id: "hu-vil-1", title: "Tutū te Pūehu | Stirring Dust", desc: "Below the earth, where soft light blooms and stone walls hum, you tended glowing gardens with steady hands. Your elders assure you that the dark holds no fear, only comfort. You have mastered the art of dirt and dust. ONCE PER SESSION: kick up a cloud for cover or send a spray of grit outward to blind and stagger nearby enemies for one turn. +1 Strength +1 Agility +1 Potions and Poisons +1 Naturalist." },
+    ],
+    "Pokapū | City": [
+      { id: "hu-city-1", title: "Tautohetohe | Debate", desc: "In great halls and star-lit ports, you watched power shift like the wind. Words once masterfully used in the courts of the Paepae, are your weapon - refined in the art of charm, humour, or a well-placed threat. You have picked up the art and power of speech and debate. ONCE PER SESSION: stun or charm any NPC (excluding Ngarara) with an unchecked Makutu. +2 Charisma +2 Kaikōrero." },
+    ],
+    "Mōwaho | Outskirts": [
+      { id: "hu-out-1", title: "Pūhiko | Source of Power", desc: "Among the endless potential of forgotten yards and discarded treasure, your mind transformed scrap into wonders and memorised the constellations like old maps. Picking through discarded scrap and combining different parts taught you how to rewire tech to your advantage. ONCE PER SESSION: manipulate tech to  create a temporary protective barrier – everyone within gains +2 block for the next turn. +1 Takutaku +1 Craftsmanship +1 Intelligence" },
+    ],
+  },
+  "Pōnāturi | Sea Folk": {
+    "Papakāinga | Village": [
+      { id: "po-vil-1", title: "Tūhonohono | Interwoven Connection", desc: "You were raised on a river of mist and ancient whispers. Here, the old ones taught you the ancient knowledge of rites and ceremony. Under the guidance of your elders, you learnt how everything is connected. ONCE PER SESSION: connect with one NPC (excluding Ngārara) to gain extra information or calm things down.. +2 Kaikōrero +1 Potions and Poisons +1 Naturalist" },
+    ],
+    "Pokapū | City": [
+      { id: "po-city-1", title: "Pā-orooro | Reverberating Echo", desc: "In a beautiful city built around a swirling portal, you grew up among mangroves and watchful guards. An environment such as this taught you to move through the world like water through stone. You watched the old guards command with a low rumble and learnt to harness this for yourself. ONCE PER SESSION: emit a low rumble through water to call on nearby small water creatures to aid you. +1 Endurance +1 Strength when in water" },
+    ],
+    "Mōwaho | Outskirts": [
+      { id: "po-out-1", title: "Koropuku | Mighty Bellow", desc: "Battered by brutal tides and toothy rivals, you were forged in the rough coral wilds. Quick, scrappy, and fierce, you learned to never hesitate and never flinch. To roar above the crashing waves was a gift you used well, your dominance was heard from great distances. ONCE PER SESSION: let out a mighty bellow that causes any smaller enemies to flee in terror. +2 Strike +2 Block when facing an enemy larger than you" },
+    ],
+  },
+};
+// Whare list (to get a typed HouseKey)
+export const HOUSE_OPTIONS = [
+  "Te Whare Taumata",
+  "Te Whare Māriri",
+  "Te Whare Ahuone",
+  "Te Whare Pōhutukawa",
+  "Te Whare Tahuaroa",
+] as const;
+
+type HouseKey = typeof HOUSE_OPTIONS[number];
+
+// One specialization (Mana Aronga) per Whare
+export const WHARE_ARONGA: Record<HouseKey, InheritedAhei[]> = {
+  "Te Whare Taumata": [
+    {
+      id: "Light clarity focus higher learning leadership",
+      title: "Pūmārama | Source of Light",
+      desc: "This whare was formed under Moeāhuru and Uru-te-ngangana and embodies the learning of wisdom, diplomacy, and ancient knowledge. Students here train with the Tewhatewha and Kotiate but their focus leans more toward leadership, communication, and managing complex systems. They learn spiritual oratory, leadership, and the responsibilities of guiding entire communities or nations. As keepers of knowledge and tradition, graduates often become Tohunga, negotiators, political leaders, or heads of other whare. ONCE PER SESSION: unleash a radiant light, all allies gain +1 to mental fortitude and takutaku skill checks and all enemies within line of sight suffer -1 to all rolls. +1 Matakite +1 Intelligence",
+    },
+  ],
+  "Te Whare Māriri": [
+    {
+      id: "Warfare strategy precision stealth",
+      title: "Pouriri | Pillar of War",
+      desc: "This school trains those best suited for combat, leadership, and mental resilience. Founded under the Atua: Hine Keira and Tūmatauenga, it focuses on physical strength, precision, and emotional control. Students learn to wield the Tī and Taiaha, sharpen their strategic thinking, and manage their inner rage without letting it consume them. Spiritual teachings focus on rituals and incantations, helping students maintain balance between the physical and spiritual realms. Those who graduate from this Whare are often leaders in defense, elite fighters, or tacticians within their communities. ONCE PER SESSION: The Player can declare a coordinated attack with an ally. Both Player Characters now attack as one - adding the total outcome of both Players dice rolls. +2 Strike after a successful Matakite Check. +2 Stealth after a succesful Naturalist Check",
+    },
+  ],
+  "Te Whare Ahuone": [
+    {
+      id: "Healing  gardening  concealment",
+      title: "Korowai Whenua | Natures Cloak",
+      desc: "This is the school of peace, growth, and restoration. Guided by the principles of Rongo and Haumia-tiketike, it shapes students into caretakers of the land and healers of people. Their weapons are the Kō and Timotimo, tools used for cultivation and combat. Training is centered on stealth, disarming tactics, and the protection of life. Students are taught environmental karakia and learn how to harmonise with the world around them. Those who complete this path often take on roles in environmental stewardship, medicine, education, or sustainable development. ONCE PER SESSION: completely conceal your party for one turn giving a +3 bonus to any stealth skill checks. +1 Potions/Poisons +1 Craftsmanship +1 Naturalist when in outside environments",
+    },
+  ],
+  "Te Whare Pōhutukawa": [
+    {
+      id: "Strength  connection  life  death",
+      title: "Mauri Tū | Unyeilding Essence",
+      desc: "This school sits at the intersection of life and death, under Hine-nui-te-pō and Tāne Māhuta. It shapes defenders, protectors, and those who operate with deep spiritual awareness. Students train with Toki Kakauroa and Mere Tūhua, learning to phase between realms and harness sound and energy through music and vibration. Physically, they become strong and resistant, with an emphasis on protective techniques and healing boosts. Their training strengthens both body and spirit, and many go on to become frontline guardians, spiritual warriors, or powerful healers. ONCE PER SESSION: channel the strength of your ancestors and gain +2 to any one roll and also remove 1 mild or moderate physical or mental consequence. +1 Mental Fortitude when protecting an ally +1 Strength when on solid ground.",
+    },
+  ],
+  "Te Whare Tahuaroa": [
+    {
+      id: "Tidal force  speed  fluidity  power",
+      title: "Tairere | Surging Tide",
+      desc: "Connected to the tides and deep oceans, this school nurtures speed, fluid movement, and emotional depth. It was established under the power of Hine Moana and Tangaroa, and its students are trained in the Hoeroa and Wahaika. The physical techniques taught here are graceful but powerful, emphasising precision, rhythm, and flexibility. ONCE PER SESSION: rush nearby enemies with the full force of a tidal surge taking no damage and knocking down all minor enemies within line of sight. +1 Strike when moving toward an opponent +1 Block when moving away from a target +1 Agility when in water.",
+    },
+  ],
+};
+
+
+// All weapons (unfiltered)
+const ALL_WEAPONS = [
+  "Tewhatewha",
+  "Kotiate",
+  "Taiaha",
+  "Tī",
+  "Timotimo",
+  "Kō",
+  "Toki Kakauroa",
+  "Mere Tūhua",
+  "Wahaika",
+  "Hoeroa",
+] as const;
+type WeaponKey = typeof ALL_WEAPONS[number];
+
+// Exactly TWO allowed weapons per Whare (edit as you like)
+export const WHARE_WEAPONS: Record<HouseKey, WeaponKey[]> = {
+  "Te Whare Taumata":    ["Kotiate", "Tewhatewha"],
+  "Te Whare Māriri":     ["Taiaha", "Tī"],
+  "Te Whare Ahuone":     ["Kō", "Timotimo"],
+  "Te Whare Pōhutukawa": ["Toki Kakauroa", "Mere Tūhua"],
+  "Te Whare Tahuaroa":   ["Hoeroa", "Wahaika"],
+};
+
 
 // All available skills (edit names to match your sheet exactly)
 
@@ -103,14 +269,21 @@ function generateScatterPositions(
 
 
 // Fixed modifiers for each of the 16 skill slots
+// ---- type guards for loading saved strings safely ----
+const isRaceKey   = (v: any): v is RaceKey   => typeof v === "string" && v in SPECIES_AHEI;
+const isOriginKey = (v: any): v is OriginKey => typeof v === "string" && (ORIGIN_OPTIONS as readonly string[]).includes(v);
+const isHouseKey  = (v: any): v is HouseKey  => typeof v === "string" && (HOUSE_OPTIONS  as readonly string[]).includes(v);
+const isWeaponKey = (v: any): v is WeaponKey => typeof v === "string" && (ALL_WEAPONS    as readonly string[]).includes(v);
 
 export default function App() {
   // === SHEET STATE ===
   const [name, setName] = useState("");
-  const [race, setRace] = useState("");
-  const [origin, setOrigin] = useState("");
-  const [house, setHouse] = useState("");
-  const [weapon, setWeapon] = useState("");
+  const [race, setRace]     = useState<RaceKey | "">("");
+const [origin, setOrigin] = useState<OriginKey | "">("");
+
+const [house, setHouse] = useState<HouseKey | "">("");
+const [weapon, setWeapon] = useState<WeaponKey | "">("");
+
   // Āhei / Stunts
 const [ahei1, setAhei1] = useState("");
 const [ahei2, setAhei2] = useState("");
@@ -145,8 +318,17 @@ const [consSevere, setConsSevere] = useState("");
 
 const [hasLoaded, setHasLoaded] = useState(false);
 
+// Selected inherited Āhei for MANA TUKU IHO (non-editable box)
+const [inheritedAheiId, setInheritedAheiId] = useState<string>("");
+// Mobile-only: show/hide the inherited Āhei description
+const [showAheiDesc, setShowAheiDesc] = useState(false);
 
+// Mana a Rohe (Origin Ability)
+const [originAheiId, setOriginAheiId] = useState<string>("");
+const [showOriginDesc, setShowOriginDesc] = useState(false);
 
+const [houseAheiId, setHouseAheiId] = useState<string>("");
+const [showArongaDesc, setShowArongaDesc] = useState(false);
 
 
 
@@ -168,14 +350,17 @@ useEffect(() => {
     consMild?: string;
     consModerate?: string;
     consSevere?: string;
+     inheritedAheiId?: string;
+     originAheiId?: string;
   }>(STORAGE_KEY_SHEET);
 
   if (saved) {
     if (saved.name   != null) setName(saved.name);
-    if (saved.race   != null) setRace(saved.race);
-    if (saved.origin != null) setOrigin(saved.origin);
-    if (saved.house  != null) setHouse(saved.house);
-    if (saved.weapon != null) setWeapon(saved.weapon);
+    if (isRaceKey(saved.race))     setRace(saved.race);     else setRace("");
+    if (isOriginKey(saved.origin)) setOrigin(saved.origin); else setOrigin("");
+    if (isHouseKey(saved.house))   setHouse(saved.house);   else setHouse("");
+    if (isWeaponKey(saved.weapon)) setWeapon(saved.weapon); else setWeapon("");
+
     if (saved.ahei1  != null) setAhei1(saved.ahei1);
     if (saved.ahei2  != null) setAhei2(saved.ahei2);
     if (saved.ahei3  != null) setAhei3(saved.ahei3);
@@ -193,6 +378,8 @@ useEffect(() => {
     if (saved.consMild  != null) setConsMild(saved.consMild);
     if (saved.consModerate != null) setConsModerate(saved.consModerate);
     if (saved.consSevere   != null) setConsSevere(saved.consSevere);
+    if (saved?.inheritedAheiId != null) setInheritedAheiId(saved.inheritedAheiId);
+    if (saved?.originAheiId != null) setOriginAheiId(saved.originAheiId);
   }
 
   setHasLoaded(true); // ✅ ALWAYS set this, even if nothing was saved
@@ -223,6 +410,9 @@ useEffect(() => {
 
     // consequences
     consMild, consModerate, consSevere,
+
+     inheritedAheiId,
+     originAheiId, 
     
   };
 
@@ -234,7 +424,7 @@ useEffect(() => {
   ult1,  ult2,  ult3,
   skillChoices, skillExtras,
   tinanaRow1, hineRow1, wairuaRow1,
-  consMild, consModerate, consSevere,
+  consMild, consModerate, consSevere, inheritedAheiId, originAheiId, 
   
 ]);
 
@@ -285,120 +475,179 @@ const [tossRun, setTossRun] = useState(0); // bump key to retrigger toss animati
     a.play().catch(() => {}); // ignore policy hiccups
   };
 
-  // === POSITIONS (desktop vs mobile) ===
-  const positionsDesktop = {
-    name:   { left: 6, top: 1,  width: 35 },
-    race:   { left: 6, top: 5.5,  width: 22 },
-    origin: { left: 6, top: 10, width: 22 },
-    house:  { left: 6, top: 14.5, width: 22 },
-    weapon: { left: 6, top: 20.5, width: 22 },
-    speciesImg: { left: 28, top: 8, width: 18 },
-    skillsTitle: { left: 47, top: 27, width: 30 },
-    skillsMod:        { left: 85, top:  27, width: 10 }, 
-    skillsBlock:       { left: 47, top: 29, width: 18 },
-skillsExtrasBlock: { left: 89, top: 29, width: 5 },
-  tinanaTitle:   { left: 52, top: 6.5, width: 30 },
-  hinengaroTitle:{ left: 52, top: 8.1, width: 30 },
-  wairuaTitle:   { left: 52, top: 9.75, width: 30 },
-  // Two rows per track (containers you can drag)
-tinanaRow1Pos:    { left: 84.5, top: 6, width: 13 },
+  // --- Reactive mobile flag (define BEFORE positions so we can use it)
+const [isMobile, setIsMobile] = useState<boolean>(() => {
+  if (typeof window === "undefined") return false;
+  return window.matchMedia("(max-width: 640px)").matches;
+});
 
+useEffect(() => {
+  if (typeof window === "undefined") return;
+  const mq = window.matchMedia("(max-width: 640px)");
+  const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+  // modern + Safari fallback
+  if (mq.addEventListener) mq.addEventListener("change", handler);
+  else mq.addListener(handler as any);
 
-hinengaroRow1Pos: { left: 52, top: 8, width: 30 },
-
-
-wairuaRow1Pos:    { left: 52, top: 10, width: 30 },
-
-
-
-
- // Desktop
-consequencesTitle: { left: 50, top: 12, width: 40 }, // adjust numbers
-    
-      // Āhei (regular)
-  ahei1:  { left: 6, top: 35, width: 37 },
-  ahei2:  { left: 6, top: 46, width: 37 },
-  ahei3:  { left: 6, top: 57, width: 37 },
-    // Ultimate Āhei block (three stacked lines)
-    // Desktop
-ultimateTitle: { left: 6, top: 69, width: 37 },
-  ultimate1: { left: 6, top: 71, width: 37 },
-  ultimate2: { left: 6, top: 79, width: 37 },
-  ultimate3: { left: 6, top: 87, width: 37 },
-// Desktop
-// in positionsDesktop
-title1: { left: 85, top: 4, width: 10 },
-title2: { left: 92, top: 4, width: 10 },
-// Desktop (example values)
-dicePanel: { left: 45, top: 82, width: 80 },
-consequencesMild:     { left: 50, top: 14.5,   width: 45 },
-consequencesModerate: { left: 50, top: 18, width: 45 },
-consequencesSevere:   { left: 50, top: 21.5,   width: 45 },
-
-
-
+  setIsMobile(mq.matches);
+  return () => {
+    if (mq.removeEventListener) mq.removeEventListener("change", handler);
+    else mq.removeListener(handler as any);
   };
-  const positionsMobile = {
-    name:   { left: 6, top: 1,  width: 30 },
-    race:   { left: 6, top: 5.5,  width: 31 },
-    origin: { left: 6, top: 10, width: 31 },
-    house:  { left: 6, top: 14, width: 31 },
-    weapon: { left: 6, top: 20, width: 20 },
-    speciesImg: { left: 32, top: 20, width: 18 },
-    skillsTitle: { left: 50, top: 34, width: 30 },
-    skillsMod:        { left: 80, top:  34, width: 14 }, 
-   skillsBlock:       { left: 50, top: 38, width: 25 },
-skillsExtrasBlock: { left: 83, top: 38, width: 12 },
-      // Āhei (regular)
-  ahei1:  { left: 6, top: 34, width: 45 },
-  ahei2:  { left: 6, top: 42, width: 45 },
-  ahei3:  { left: 6, top: 50, width: 45 },
-    // Ultimate Āhei
-    // Mobile
-ultimateTitle: { left: 6, top: 58, width: 45 },
-  ultimate1: { left: 6, top: 59, width: 56 },
-  ultimate2: { left: 6, top: 66.5, width: 56 },
-  ultimate3: { left: 6, top: 74, width: 56 },
-// Mobile (usually below or smaller)
-  tinanaTitle:   { left: 40, top: 7.5, width: 60 },
-  hinengaroTitle:{ left: 40, top: 10.5, width: 60 },
-  wairuaTitle:   { left: 40, top: 13.5, width: 60 },
-  // Two rows per track (containers you can drag)
-tinanaRow1Pos:    { left: 82, top: 7, width: 15 },
+}, []);
 
-hinengaroRow1Pos: { left: 52, top: 59, width: 30 },
+// === POSITIONS (desktop vs mobile) ===
+type Rect = { left: number; top: number; width: number };
+type Positions = {
+  // identity + artwork
+  name: Rect; race: Rect; origin: Rect; house: Rect; weapon: Rect; speciesImg: Rect;
+  // skills
+  skillsTitle: Rect; skillsMod: Rect; skillsBlock: Rect; skillsExtrasBlock: Rect;
+  // stress titles + rows
+  tinanaTitle: Rect; hinengaroTitle: Rect; wairuaTitle: Rect;
+  tinanaRow1Pos: Rect; hinengaroRow1Pos: Rect; wairuaRow1Pos: Rect;
+  // consequences
+  consequencesTitle: Rect; consequencesMild: Rect; consequencesModerate: Rect; consequencesSevere: Rect;
+  // headings / misc
+  title1: Rect; title2: Rect; dicePanel: Rect;
+  // ahei 1 (split)
+  ahei1Select: Rect; ahei1Toggle: Rect; ahei1Desc: Rect;
+  // ahei 2 (split)
+    ahei2Select: Rect; ahei2Toggle: Rect; originDesc: Rect;
+   // ahei 3 (split) 
+    ahei3Select: Rect; ahei3Toggle: Rect; ahei3Desc: Rect;
+  // ultimate
+  ultimateTitle: Rect; ultimate1: Rect; ultimate2: Rect; ultimate3: Rect;
+};
 
-wairuaRow1Pos:    { left: 52, top: 74, width: 30 },
-// in positionsMobile
-title1: { left: 83, top: 4, width: 5 },
-title2: { left: 91.5, top: 4, width: 5 },
-// Mobile
-consequencesTitle: { left: 52, top: 19, width: 80 }, // adjust numbers
-// Mobile (example values)
-dicePanel: { left: 5, top: 80, width: 45},
-consequencesMild:     { left: 50, top: 22, width: 45 },
-consequencesModerate: { left: 50, top: 26, width: 45 },
-consequencesSevere:   { left: 50, top: 30, width: 45 },
+const positionsDesktop: Positions = {
+  // identity + artwork
+  name:{left:6,top:1,width:35},
+  race:{left:6,top:5.5,width:22},
+  origin:{left:6,top:10,width:22},
+  house:{left:6,top:14.5,width:22},
+  weapon:{left:6,top:20.5,width:22},
+  speciesImg:{left:28,top:8,width:18},
 
-  };
-  const isMobile =
-  typeof window !== "undefined" &&
-  window.matchMedia("(max-width: 640px)").matches;
-  
-const preset = isMobile ? positionsMobile : positionsDesktop;
+  // skills
+  skillsTitle:{left:47,top:27,width:30},
+  skillsMod:{left:85,top:27,width:10},
+  skillsBlock:{left:47,top:29,width:18},
+  skillsExtrasBlock:{left:89,top:29,width:5},
+
+  // stress titles + rows
+  tinanaTitle:{left:52,top:6.5,width:30},
+  hinengaroTitle:{left:52,top:8.1,width:30},
+  wairuaTitle:{left:52,top:9.75,width:30},
+  tinanaRow1Pos:{left:84.5,top:6,width:13},
+  hinengaroRow1Pos:{left:52,top:8,width:30},
+  wairuaRow1Pos:{left:52,top:10,width:30},
+
+  // consequences
+  consequencesTitle:{left:50,top:12,width:40},
+  consequencesMild:{left:50,top:14.5,width:45},
+  consequencesModerate:{left:50,top:18,width:45},
+  consequencesSevere:{left:50,top:21.5,width:45},
+
+  // ahei 1 split
+  ahei1Select:{left:6,top:35,width:37},
+  ahei1Toggle:{left:6,top:39.5,width:18},
+  ahei1Desc:{left:8,top:39.5,width:35},
+
+  // ahei 2 split
+  ahei2Select:{ left: 6, top: 46,   width: 37 },
+  ahei2Toggle:{ left: 6, top: 50.5, width: 18 },
+  originDesc:  { left: 8, top: 50.5, width: 35 },
+
+  // ahei 3 split
+  // add:
+ahei3Select:{ left: 6, top: 57,   width: 37 },
+ahei3Toggle:{ left: 6, top: 61.5, width: 18 },
+ahei3Desc:  { left: 6, top: 63,   width: 37 },
 
 
-// Start with whichever preset matches device
-const [pos, setPos] = useState(preset);
+  // ultimate
+  ultimateTitle:{left:6,top:69,width:37},
+  ultimate1:{left:6,top:71,width:37},
+  ultimate2:{left:6,top:79,width:37},
+  ultimate3:{left:6,top:87,width:37},
 
-// Reset if device size bucket changes
+  // headings / misc
+  title1:{left:85,top:4,width:10},
+  title2:{left:92,top:4,width:10},
+  dicePanel:{left:45,top:82,width:80},
+};
+
+const positionsMobile: Positions = {
+  // identity + artwork
+  name:{left:6,top:1,width:30},
+  race:{left:6,top:5.5,width:31},
+  origin:{left:6,top:10,width:31},
+  house:{left:6,top:14,width:31},
+  weapon:{left:6,top:20,width:20},
+  speciesImg:{left:32,top:20,width:18},
+
+  // skills
+  skillsTitle:{left:50,top:34,width:30},
+  skillsMod:{left:80,top:34,width:14},
+  skillsBlock:{left:50,top:38,width:25},
+  skillsExtrasBlock:{left:83,top:38,width:12},
+
+  // ahei 1 split
+  ahei1Select:{left:6,top:34,width:42.5},
+  ahei1Toggle:{left:6,top:38,width:28},
+  ahei1Desc:{left:6,top:40,width:45},
+
+  // ahei 2 split
+  ahei2Select:{ left: 6, top: 42, width: 42.5 },
+  ahei2Toggle:{ left: 6, top: 46, width: 28 },
+  originDesc:  { left: 6, top: 48, width: 45 },
+
+  // ahei 3 split
+  // add:
+ahei3Select:{ left: 6, top: 50, width: 45 },
+ahei3Toggle:{ left: 6, top: 54, width: 28 },
+ahei3Desc:  { left: 6, top: 56, width: 45 },
+
+
+  // ultimate
+  ultimateTitle:{left:6,top:58,width:45},
+  ultimate1:{left:6,top:59,width:56},
+  ultimate2:{left:6,top:66.5,width:56},
+  ultimate3:{left:6,top:74,width:56},
+
+  // stress titles + rows
+  tinanaTitle:{left:40,top:7.5,width:60},
+  hinengaroTitle:{left:40,top:10.5,width:60},
+  wairuaTitle:{left:40,top:13.5,width:60},
+  tinanaRow1Pos:{left:82,top:7,width:15},
+  hinengaroRow1Pos:{left:52,top:59,width:30},
+  wairuaRow1Pos:{left:52,top:74,width:30},
+
+  // headings / misc
+  title1:{left:83,top:4,width:5},
+  title2:{left:91.5,top:4,width:5},
+  dicePanel:{left:5,top:80,width:45},
+
+  // consequences
+  consequencesTitle:{left:52,top:19,width:80},
+  consequencesMild:{left:50,top:22,width:45},
+  consequencesModerate:{left:50,top:26,width:45},
+  consequencesSevere:{left:50,top:30,width:45},
+};
+
+const [pos, setPos] = useState<Positions>(isMobile ? positionsMobile : positionsDesktop);
 useEffect(() => {
   setPos(isMobile ? positionsMobile : positionsDesktop);
 }, [isMobile]);
 
-   
- return (
+
+
+
+
+return (
   <>
+
     <div className="sheet-wrap">
       <div className="sheet">
       <img src="/Background.png" alt="Character Sheet" />
@@ -535,12 +784,40 @@ useEffect(() => {
             <span className="label-white">IRA | </span>
             <span className="label-black">SPECIES</span>
           </div>
-          <select className="select-underline" value={race} onChange={(e) => setRace(e.target.value)}>
-            <option value="">— select —</option>
-            <option value="Patupaiārehe | Forest Folk">Patupaiārehe | Forest Folk</option>
-            <option value="Pōnāturi | Sea Folk">Pōnāturi | Sea Folk</option>
-            <option value="Tangata | Human Folk">Tangata | Human Folk</option>
-          </select>
+<select
+  className="select-underline"
+  value={race}
+  onChange={(e) => {
+    const nextRace = e.target.value as RaceKey | "";
+    setRace(nextRace);
+
+    // 1) Keep Mana Tuku Iho (inherited) valid
+    const inheritedOpts = nextRace ? SPECIES_AHEI[nextRace] : [];
+    if (!inheritedOpts.some(a => a.id === inheritedAheiId)) {
+      setInheritedAheiId("");
+    }
+
+    // 2) Keep Mana a Rohe (origin ability) valid for (nextRace + current origin)
+    if (nextRace && origin) {
+      const originOpts = ORIGIN_AHEI[nextRace][origin];
+      if (!originOpts.some(a => a.id === originAheiId)) {
+        setOriginAheiId("");
+      }
+    } else {
+      setOriginAheiId("");
+    }
+
+    // 3) Close details panels
+    setShowAheiDesc(false);
+    setShowOriginDesc(false);
+  }}
+>
+  <option value="">— select —</option>
+  <option value="Patupaiārehe | Forest Folk">Patupaiārehe | Forest Folk</option>
+  <option value="Pōnāturi | Sea Folk">Pōnāturi | Sea Folk</option>
+  <option value="Tangata | Human Folk">Tangata | Human Folk</option>
+</select>
+
         </div>
 
 
@@ -579,12 +856,34 @@ useEffect(() => {
             <span className="label-white">ŪKAIPŌ | </span>
             <span className="label-black">ORIGIN</span>
           </div>
-          <select className="select-underline" value={origin} onChange={(e) => setOrigin(e.target.value)}>
-            <option value="">— select —</option>
-            <option value="Papakāinga | Village">Papakāinga | Village</option>
-            <option value="Pokapū | City">Pokapū | City</option>
-            <option value="Mōwaho | Outskirts">Mōwaho | Outskirts</option>
-          </select>
+          <select
+  className="select-underline"
+  value={origin}
+  onChange={(e) => {
+    const next = e.target.value as OriginKey | "";
+    setOrigin(next);
+
+    // Keep Mana a Rohe valid for (current race + next origin)
+    if (race && next) {
+      const list = ORIGIN_AHEI[race][next];
+      if (!list.some(a => a.id === originAheiId)) {
+        setOriginAheiId("");
+      }
+    } else {
+      setOriginAheiId("");
+    }
+
+    setShowOriginDesc(false);
+  }}
+  disabled={!race}   // must choose Ira first
+>
+  <option value="">— select —</option>
+  <option value="Papakāinga | Village">Papakāinga | Village</option>
+  <option value="Pokapū | City">Pokapū | City</option>
+  <option value="Mōwaho | Outskirts">Mōwaho | Outskirts</option>
+</select>
+
+
         </div>
 
         {/* Whare Wānanga | House of Learning (two-line label) */}
@@ -596,15 +895,33 @@ useEffect(() => {
             <span className="label-white">WHARE WĀNANGA |</span><br />
             <span className="label-black">HOUSE OF LEARNING</span>
           </div>
-          <select className="select-underline" value={house} onChange={(e) => setHouse(e.target.value)}>
-            <option value="">— select —</option>
-            <option value="Te Whare Taumata">Te Whare Taumata</option>
-            <option value="Te Whare Māriri">Te Whare Māriri</option>
-            <option value="Te Whare Ahuone">Te Whare Ahuone</option>
-            <option value="Te Whare Pōhutukawa">Te Whare Pōhutukawa</option>
-            <option value="Te Whare Tahuaroa">Te Whare Tahuaroa</option>
-          </select>
-        </div>
+          <select
+  className="select-underline"
+  value={house}
+  onChange={(e) => {
+    const next = e.target.value as HouseKey | "";
+    setHouse(next);
+    setShowArongaDesc(false); // close aronga details when house changes
+
+    // enforce allowed weapons for this Whare
+    if (next) {
+      const allowed = WHARE_WEAPONS[next];
+
+      if (weapon && !allowed.includes(weapon as WeaponKey)) {
+        setWeapon(""); // clear invalid weapon
+      }
+    }
+  }}
+>
+  <option value="">— select —</option>
+  <option value="Te Whare Taumata">Te Whare Taumata</option>
+  <option value="Te Whare Māriri">Te Whare Māriri</option>
+  <option value="Te Whare Ahuone">Te Whare Ahuone</option>
+  <option value="Te Whare Pōhutukawa">Te Whare Pōhutukawa</option>
+  <option value="Te Whare Tahuaroa">Te Whare Tahuaroa</option>
+ </select>
+ </div>
+
 
         {/* Mauriri | Weapon */}
         <div
@@ -615,20 +932,24 @@ useEffect(() => {
             <span className="label-white">MAURIRI |</span>
             <span className="label-black">WEAPON</span>
           </div>
-          <select className="select-underline" value={weapon} onChange={(e) => setWeapon(e.target.value)}>
-            <option value="">— select —</option>
-            <option value="Tewhatewha">Tewhatewha</option>
-            <option value="Kotiate">Kotiate</option>
-            <option value="Taiaha">Taiaha</option>
-            <option value="Tī">Tī</option>
-            <option value="Timotimo">Timotimo</option>
-            <option value="Kō">Kō</option>
-            <option value="Toki Kakauroa">Toki Kakauroa</option>
-            <option value="Mere Tūhua">Mere Tūhua</option>
-            <option value="Wahaika">Wahaika</option>
-            <option value="Hoeroa">Hoeroa</option>
-          </select>
-        </div>
+          <select
+  className="select-underline"
+  value={weapon}
+  onChange={(e) => setWeapon(e.target.value as WeaponKey | "")}
+  disabled={!house}   // must choose a Whare first
+>
+  <option value="">— select —</option>
+
+  {(
+    house
+      ? WHARE_WEAPONS[house as HouseKey]        // the 2 allowed for this Whare
+      : ALL_WEAPONS                              // fallback if no house picked
+  ).map((w) => (
+    <option key={w} value={w}>{w}</option>
+  ))}
+</select>
+</div>
+
         {/* PŪKENGA | SKILLS (title only) */}
 <div
   className="field title title--skills"
@@ -741,56 +1062,176 @@ useEffect(() => {
 
 
 
-        {/* Āhei 1 */}
-        <div
-          className="field field--lg field--compact"
-          style={{ left: `${pos.ahei1.left}%`, top: `${pos.ahei1.top}%`, width: `${pos.ahei1.width}%` }}
-        >
-          <div className="field-label">
-            <span className="label-white">MANA TUKU IHO | </span>
-            <span className="label-black">INHERITED ABILITY</span>
-          </div>
-          <textarea
-            className="textarea-underline ahei"
-            value={ahei1}
-            onChange={(e) => setAhei1(e.target.value)}
-            rows={7}
-          />
-        </div>
+{/* Āhei 1 — Label + select */}
+<div
+  className="field field--lg field--compact"
+  style={{ left: `${pos.ahei1Select.left}%`, top: `${pos.ahei1Select.top}%`, width: `${pos.ahei1Select.width}%` }}
+>
+  <div className="field-label">
+    <span className="label-white">MANA TUKU IHO | </span>
+    <span className="label-black">INHERITED ABILITY</span>
+  </div>
 
-        {/* Āhei 2 */}
-        <div
-          className="field field--lg field--compact"
-          style={{ left: `${pos.ahei2.left}%`, top: `${pos.ahei2.top}%`, width: `${pos.ahei2.width}%` }}
-        >
-          <div className="field-label">
-            <span className="label-white">MANA A ROHE | </span>
-            <span className="label-black">ORIGIN ABILITY</span>
-          </div>
-          <textarea
-            className="textarea-underline ahei"
-            value={ahei2}
-            onChange={(e) => setAhei2(e.target.value)}
-            rows={7}
-          />
-        </div>
+  <select
+    className="select-underline"
+    value={inheritedAheiId}
+    onChange={(e) => { setInheritedAheiId(e.target.value); setShowAheiDesc(false); }}
+    disabled={!race}
+  >
+    <option value="">— choose your inherited ability —</option>
+    {(SPECIES_AHEI[race] || []).map(a => (
+      <option key={a.id} value={a.id}>{a.title}</option>
+    ))}
+  </select>
+</div>
 
-        {/* Āhei 3 */}
-        <div
-          className="field field--lg field--compact"
-          style={{ left: `${pos.ahei3.left}%`, top: `${pos.ahei3.top}%`, width: `${pos.ahei3.width}%` }}
-        >
-          <div className="field-label">
-            <span className="label-white">MANA ARONGA | </span>
-            <span className="label-black">SPECIALIZATION</span>
-          </div>
-          <textarea
-            className="textarea-underline ahei"
-            value={ahei3}
-            onChange={(e) => setAhei3(e.target.value)}
-            rows={7}
-          />
-        </div>
+{/* Āhei 1 — Toggle button (mobile only; CSS hides on desktop) */}
+{race && inheritedAheiId && (
+  <div
+    className="field field--toggle"
+    style={{ left: `${pos.ahei1Toggle.left}%`, top: `${pos.ahei1Toggle.top}%`, width: `${pos.ahei1Toggle.width}%`}}
+  >
+    <button type="button" className="btn toggle-desc" onClick={() => setShowAheiDesc(s => !s)}>
+      {showAheiDesc ? "Hide details" : "Show details"}
+    </button>
+  </div>
+)}
+
+{/* Āhei 1 — Description box (always on desktop; toggled on mobile) */}
+{race && inheritedAheiId && showAheiDesc && (
+  <div
+  className={`field overlay-wrap overlay-wrap--inherited ${showAheiDesc ? "open" : ""}`}
+  style={{ left: `${pos.ahei1Desc.left}%`, top: `${pos.ahei1Desc.top}%`, width: `${pos.ahei1Desc.width}%` }}
+>
+
+ 
+    <div className="overlay-box overlay-box--tuku-iho">
+      <div className="ahei-desc">
+        {(SPECIES_AHEI[race] || []).find(a => a.id === inheritedAheiId)?.desc}
+      </div>
+    </div>
+  </div>
+)}
+
+
+
+
+
+
+
+
+
+
+
+        {/* Āhei 2 — Label + select (Origin ability) */}
+<div
+  className="field field--lg field--compact"
+  style={{ left: `${pos.ahei2Select.left}%`, top: `${pos.ahei2Select.top}%`, width: `${pos.ahei2Select.width}%` }}
+>
+  <div className="field-label">
+    <span className="label-white">MANA A ROHE | </span>
+    <span className="label-black">ORIGIN ABILITY</span>
+  </div>
+
+  <select
+    className="select-underline"
+    value={originAheiId}
+    onChange={(e) => { setOriginAheiId(e.target.value); setShowOriginDesc(false); }}
+    disabled={!(race && origin)}
+  >
+    <option value="">— choose your origin ability —</option>
+    {(race && origin ? ORIGIN_AHEI[race][origin] : []).map(a => (
+      <option key={a.id} value={a.id}>{a.title}</option>
+    ))}
+  </select>
+</div>
+
+{/* Āhei 2 — Toggle (mobile only; CSS hides on desktop) */}
+{race && origin && originAheiId && (
+  <div
+    className="field field--toggle"
+    style={{ left: `${pos.ahei2Toggle.left}%`, top: `${pos.ahei2Toggle.top}%`, width: `${pos.ahei2Toggle.width}%` }}
+  >
+    <button type="button" className="btn toggle-desc" onClick={() => setShowOriginDesc(s => !s)}>
+      {showOriginDesc ? "Hide details" : "Show details"}
+    </button>
+  </div>
+)}
+
+{race && origin && originAheiId && showOriginDesc && (() => {
+  const desc = (ORIGIN_AHEI[race]?.[origin] ?? []).find(a => a.id === originAheiId)?.desc;
+  return (
+    <div
+  className={`field overlay-wrap overlay-wrap--origin ${showOriginDesc ? "open" : ""}`}
+  style={{ left: `${pos.originDesc.left}%`, top: `${pos.originDesc.top}%`, width: `${pos.originDesc.width}%` }}
+>
+
+      <div className="overlay-box overlay-box--origin">
+        <div className="ahei-desc">{desc}</div>
+      </div>
+    </div>
+  );
+})()}
+
+
+
+
+
+        {/* Āhei 3 — Mana Aronga (driven by Whare) */}
+<div
+  className="field field--lg field--compact"
+  style={{ left: `${pos.ahei3Select.left}%`, top: `${pos.ahei3Select.top}%`, width: `${pos.ahei3Select.width}%` }}
+>
+  <div className="field-label">
+    <span className="label-white">MANA ARONGA | </span>
+    <span className="label-black">SPECIALIZATION</span>
+  </div>
+
+  <select
+    className="select-underline"
+    value={houseAheiId}
+    onChange={(e) => setHouseAheiId(e.target.value)}
+    disabled={!house}
+  >
+    <option value="">— auto from Whare —</option>
+    {(house ? WHARE_ARONGA[house as HouseKey] : []).map(a => (
+
+      <option key={a.id} value={a.id}>{a.title}</option>
+    ))}
+  </select>
+</div>
+
+{house && houseAheiId && (
+  <div
+    className="field field--toggle"
+    style={{ left: `${pos.ahei3Toggle.left}%`, top: `${pos.ahei3Toggle.top}%`, width: `${pos.ahei3Toggle.width}%` }}
+  >
+    <button type="button" className="btn toggle-desc" onClick={() => setShowArongaDesc(s => !s)}>
+      {showArongaDesc ? "Hide details" : "Show details"}
+    </button>
+  </div>
+)}
+
+{/* 5b — OVERLAY goes RIGHT HERE */}
+{house && houseAheiId && showArongaDesc && (
+  <div
+    className="field overlay-wrap open"
+    style={{
+      left:  `${pos.ahei3Desc.left}%`,
+      top:   `${pos.ahei3Desc.top}%`,
+      width: `${pos.ahei3Desc.width}%`,
+      zIndex: 13,
+    }}
+  >
+    <div className="overlay-box overlay-box--aronga">
+      <div className="ahei-desc">
+        {WHARE_ARONGA[house as HouseKey].find(a => a.id === houseAheiId)?.desc}
+
+      </div>
+    </div>
+  </div>
+)}
+
         {/* Ultimate Āhei — section title only */}
 <div
   className="field field--lg field--compact"

@@ -323,7 +323,7 @@
 
   .skill-row {
     gap: 2px;              /* less horizontal spacing */
-    margin-bottom: px;    /* tighter vertical spacing */
+    
     width: 160%;            /* shrink row width */
   }
 }
@@ -612,13 +612,7 @@
   margin-right: 4px;
 }
 
-.consequence-input {
-  flex: 1;
-  border: none;
-  border-bottom: 1px solid #333;
-  background: transparent;
-  padding: 2px 3px;
-}
+
 @media (max-width: 640px) {
   .consequence-box {
     padding: 1px 2px;       /* tighter padding */
@@ -657,3 +651,295 @@
     padding: 8px;
   }
 }
+/* Locked inherited ahei display */
+
+
+
+.ahei-empty {
+  font-size: 12px;
+  opacity: 0.75;
+  padding: 4px 0;
+}
+
+.ahei-view .ahei-title {
+  font-weight: 800;
+  margin-bottom: 4px;
+  letter-spacing: 0.2px;
+}
+
+/* NEW */
+.ahei-desc { font-size: 13px; line-height: 1.25; }
+@media (max-width: 640px) { .ahei-desc { font-size: 10px; } }
+
+
+/* Mobile toggle for the inherited Āhei description */
+.toggle-desc {
+  margin-top: 4px;
+  padding: 4px 6px;
+  font-size: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: #fff;
+  cursor: pointer;
+}
+
+
+
+/* The description is visible whenever the box is rendered */
+.ahei-locked .ahei-desc { display: block; }
+
+
+/* Phones (<=640px): hide desc by default, show when .open. Show the button. */
+@media (max-width: 640px) {
+  .ahei-locked .ahei-desc { display: none; }
+  .ahei-locked.open .ahei-desc { display: block; }
+  .toggle-desc { display: inline-block; }
+}
+
+
+
+/* --- Force the mobile toggle to show and be clickable --- */
+@media (max-width: 640px) {
+  .btn.toggle-desc {
+    display: inline-block !important;
+    position: relative;
+    z-index: 1000;
+    outline: 1px dashed transparent; /* change to 'red' to debug visually */
+  }
+  /* hide description by default on phones, show when .open */
+  .ahei-locked .ahei-desc { display: none !important; }
+  .ahei-locked.open .ahei-desc { display: block !important; }
+}
+
+
+.btn.toggle-desc { outline: 1px dashed red !important; }
+/* --- Native <details> toggle for the Mana Tuku Iho box --- */
+
+/* Style the summary as a button */
+.ahei-locked >  {
+  margin-top: 4px;
+  padding: 4px 6px;
+  font-size: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: #ffffff73;
+  cursor: pointer;
+  list-style: none;
+  display: inline-block;
+  position: relative;
+  z-index: 1000;           /* sit above anything nearby */
+}
+
+/* Hide the default marker/triangle */
+.ahei-locked > ::-webkit-details-marker { display: none; }
+
+/* Dynamic label text without JS */
+.ahei-locked >  { content: "Show details"; font-weight: 600; }
+.ahei-locked[open] >  { content: "Hide details"; }
+
+/* On phones: start collapsed; show content only when open */
+@media (max-width: 640px) {
+  /* Neutralize old rules that used .open class */
+  .ahei-locked .ahei-desc { display: none !important; }
+   .ahei-desc { display: block !important; }
+}
+
+
+  
+
+
+/* Optional: chevron + rotate on open */
+.ahei-locked > ::before {
+  content: "▸";
+  display: inline-block;
+  margin-right: 6px;
+  transition: transform .15s ease;
+}
+.ahei-locked[open] > :before {
+  transform: rotate(90deg);
+}
+
+/* If you want the button aligned right */
+.ahei-locked { text-align: left; }
+.ahei-locked >  { display: inline-block; }
+/* MOBILE: make the details panel overlay other fields when open */
+
+  
+  
+
+/* Compact "Show details" control */
+
+.btn.toggle-desc {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 6px;     /* ↓ shrink vertical/horizontal padding */
+  line-height: 1;       /* ↓ prevents tall line box */
+  font-size: 10px;      /* tweak to taste */
+  border-radius: 4px;
+  min-height: 0;        /* cancel any UA min height */
+}
+
+/* Even tighter on phones */
+@media (max-width: 640px) {
+  
+  .btn.toggle-desc {
+    padding: 1px 5px;
+    font-size: 11px;
+  }
+}
+
+/* If you're using <summary>, hide the default marker */
+:-webkit-details-marker { display: none; }
+:marker { content: ""; }
+/* Desktop (>=641px) */
+
+
+/* Desktop only */
+@media (min-width: 641px) {
+  .ahei-locked { 
+    width: 120%;          /* or a fixed/max width just for desktop */
+    max-width: none;      /* e.g., max-width: 560px; if you want a cap */
+    margin-inline: 0;     /* undo any centering from mobile */
+  }
+  .ahei-locked.open {     /* if you use overlay style while open */
+    width: 100%;
+    max-width: none;
+  }
+}
+
+/* Mobile only (your narrower setting) */
+@media (max-width: 640px) {
+  .ahei-locked,
+  .ahei-locked.open {
+    width: 80%;
+    margin-inline: auto;  /* center on mobile */
+  }
+}
+/* Put this near the END of your CSS file */
+.ahei-locked,
+.ahei-locked.open {
+  background-color: #fff;   /* solid white, no alpha */
+}
+.ahei-locked,
+.ahei-locked.open {
+  background: #fff !important;   /* solid */
+}
+/* 1) Make the open/toggled description box SOLID and elevated */
+.ahei-locked.open {
+  background: #fff !important;          /* solid white */
+  box-shadow: 0 8px 24px rgba(0,0,0,.25) !important;
+}
+
+
+/* 3) Prevent parent clipping and provide a positioning context */
+.sheet-wrap,
+.sheet {
+  position: relative;                    /* establish positioning context */
+  overflow: visible;                     /* allow overlay to spill over */
+}
+
+
+
+
+
+/* Container shouldn’t clip overlays */
+.sheet-wrap,
+.sheet {
+  position: relative;
+  overflow: visible;
+}
+.ahei-locked { background: #fff; }
+
+
+@media (max-width: 640px) {
+  .ahei-locked:not(.open) { display: none; }/* collapse desc on mobile when closed */
+}
+.sheet { position: relative; z-index: 0; }
+.field { position: absolute; }
+/* Base stacking context */
+.sheet { position: relative; z-index: 0; }
+
+/* All positioned fields live under titles/overlays by default */
+.field { position: absolute; z-index: 1; }
+
+/* Titles a touch higher if needed */
+.title { z-index: 3; }
+
+/* Toggle button wrapper LOWER than most things */
+.field--toggle { z-index: 2; }
+
+/* Dice / other panels (if you want them above normal fields) */
+.panel, .dice-panel { z-index: 8; }
+
+/* === AHEI TOGGLES & OVERLAYS — CANONICAL === */
+
+/* Base stacking */
+.sheet { position: relative; z-index: 0; }
+.field { position: absolute; z-index: 1; }
+.title { z-index: 3; }        /* titles above normal fields */
+.panel, .dice-panel { z-index: 8; }  /* dice panel, etc. */
+
+/* Toggle button (always visible on all breakpoints) */
+.btn.toggle-desc {
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  padding: 2px 6px;
+  font-size: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: #fff;
+  cursor: pointer;
+  position: relative;   /* default stacking */
+  z-index: auto;        /* default stacking */
+}
+
+/* Optional: wrapper for toggle position fields */
+.field--toggle { z-index: 2; }
+
+/* Overlays: hidden by default; shown when JS adds .open */
+.field.overlay-wrap { position: absolute; display: none; }
+.field.overlay-wrap.open { display: block; }
+
+/* Give each overlay its own z-plane so they never clash */
+.field.overlay-wrap--inherited { z-index: 15; } /* Mana Tuku Iho */
+.field.overlay-wrap--origin    { z-index: 14; } /* Mana a Rohe */
+
+/* The actual description box */
+.overlay-box {
+  background: #fff;                 /* solid, no transparency */
+  border: 2px solid #111;
+  border-radius: 8px;
+  box-shadow: 0 6px 16px rgba(0,0,0,.25);
+  padding: 10px 12px;
+  max-height: 220px;
+  overflow: auto;
+}
+
+/* Keep the inline “locked” box (if you still use it elsewhere) solid too */
+.ahei-locked {
+  border: 2px solid #111;
+  border-radius: 6px;
+  background: #fff;                 /* solid background */
+  padding: 8px 10px;
+}
+
+/* Text inside both overlays */
+.ahei-desc { font-size: 13px; line-height: 1.25; }
+@media (max-width: 640px) { .ahei-desc { font-size: 10px; } }
+
+/* === FORCE TOGGLES TO SHOW ON DESKTOP & MOBILE === */
+.btn.toggle-desc {
+  display: inline-flex !important;   /* beat earlier display:none rules */
+  position: relative;
+  z-index: 2;                        /* below overlays (which are 13/14/15) */
+}
+
+/* Keep overlays above the buttons when opened */
+.overlay-wrap--inherited { z-index: 14; }
+.overlay-wrap--origin    { z-index: 13; }   /* or 15 if you want it on top */
+
+
+
+
+
