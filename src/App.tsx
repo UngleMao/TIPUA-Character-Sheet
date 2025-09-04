@@ -21,6 +21,19 @@ function saveJSON(key: string, value: unknown) {
   try { localStorage.setItem(key, JSON.stringify(value)); } catch {}
 }
 // Fixed base values for the 16 skills (row order)
+// Turn "Mere Tūhua" -> "meretuhua", "Toki Kakauroa" -> "tokikakauroa", "Kō" -> "ko", "Tī" -> "ti"
+function toWeaponSlug(label: string) {
+  const macronMap: Record<string, string> = { ā:"a", ē:"e", ī:"i", ō:"o", ū:"u", Ā:"A", Ē:"E", Ī:"I", Ō:"O", Ū:"U" };
+  const deMacron = label.replace(/[āēīōūĀĒĪŌŪ]/g, ch => macronMap[ch] || ch);
+  return deMacron.toLowerCase().replace(/[^a-z]+/g, "");
+}
+
+// If any file is named a bit differently, override it here by *display label*:
+const WEAPON_FILE_OVERRIDES: Record<string, string> = {
+  "Tī": "ti",
+  "Kō": "ko",
+  
+};
 
 
 
@@ -188,6 +201,20 @@ const ALL_WEAPONS = [
 ] as const;
 type WeaponKey = typeof ALL_WEAPONS[number];
 
+const WEAPON_INFO: Record<WeaponKey, { title: string; desc: string }> = {
+  "Tewhatewha": { title: "Tewhatewha", desc: "Long-handled, axe-like staff; signal allies or taunt enemies, control space, decisive strikes with the back end of the stylized axe end and stab enemies with the pointed end below the handle." },
+  "Kotiate":    { title: "Kotiate",    desc: "Hand held cleaver; fast, precise, close quarter weapon with stylized notches for parrying weapons and for cracking bone with a flick of the wrist." },
+  "Taiaha":     { title: "Taiaha",     desc: "two handed staff; balanced for offense and defence. the broad end is used to cut with the sharp edge, parry and strike with the flat and thrust with the hardened end, the carved ūpoko below the handle with a stylized arero is used to stab." },
+  "Tī":         { title: "Tī",         desc: "Concealed narrow blades used for quick focused thrusts and close quarter style fighting. the fine serrated blade is capable of holding poison and directing it into the bloodstream" },
+  "Timotimo":   { title: "Timotimo",   desc: "A traditional hand held gardening tool adapted for combat; disruptive in close-quarters and capable of disarming opponents or redirecting their strikes. The hardened point is deadly." },
+  "Kō":         { title: "Kō",         desc: "A traditional two handed tool used for digging, adapted for combat the kō creates leverage, with lifts and sweeps that unbalance, strength in defence and a crippling final thrust." },
+  "Toki Kakauroa": { title: "Toki Kakauroa", desc: "Long handled adze; heavy, crushing blows that break stances and bones alike with a sharpened axe-like blade fixed on the end and a strong handle capable of blocking attacks." },
+  "Mere Tūhua": { title: "Mere Tūhua", desc: "Polished obsidian hand held cleaver; compact, lethal at close range. The blade along its edge is so sharp, the victim often doesn't realise they have been cut." },
+  "Wahaika":    { title: "Wahaika",    desc: "Hand held striking weapon with a stylized recurved blade; used to trap limbs and weapons and control the battle at close range. The outside blade is sharpened and used for slashing while the flat face is used to block and strike at the opponent." },
+  "Hoeroa":     { title: "Hoeroa",     desc: "Long curved staff carved with precision from the bones of an ancient beast; Proficient extended strikes, thrusts and blocks with whip-like arcs stun and slice opponents with ease. Once the momentum of a Hoeroa begins it is hard to stop." },
+};
+
+
 // Exactly TWO allowed weapons per Whare (edit as you like)
 export const WHARE_WEAPONS: Record<HouseKey, WeaponKey[]> = {
   "Te Whare Taumata":    ["Kotiate", "Tewhatewha"],
@@ -330,6 +357,13 @@ const [showOriginDesc, setShowOriginDesc] = useState(false);
 const [houseAheiId, setHouseAheiId] = useState<string>("");
 const [showArongaDesc, setShowArongaDesc] = useState(false);
 
+// Weapon popup toggle
+const [showWeaponDesc, setShowWeaponDesc] = useState(false);
+
+// auto-close the popup whenever the selected weapon changes
+useEffect(() => {
+  setShowWeaponDesc(false);
+}, [weapon]);
 
 
 
@@ -352,6 +386,8 @@ useEffect(() => {
     consSevere?: string;
      inheritedAheiId?: string;
      originAheiId?: string;
+     houseAheiId?: string;
+
   }>(STORAGE_KEY_SHEET);
 
   if (saved) {
@@ -380,6 +416,8 @@ useEffect(() => {
     if (saved.consSevere   != null) setConsSevere(saved.consSevere);
     if (saved?.inheritedAheiId != null) setInheritedAheiId(saved.inheritedAheiId);
     if (saved?.originAheiId != null) setOriginAheiId(saved.originAheiId);
+    if (saved?.houseAheiId != null) setHouseAheiId(saved.houseAheiId);
+
   }
 
   setHasLoaded(true); // ✅ ALWAYS set this, even if nothing was saved
@@ -412,7 +450,9 @@ useEffect(() => {
     consMild, consModerate, consSevere,
 
      inheritedAheiId,
-     originAheiId, 
+     originAheiId,
+     houseAheiId, 
+
     
   };
 
@@ -424,7 +464,7 @@ useEffect(() => {
   ult1,  ult2,  ult3,
   skillChoices, skillExtras,
   tinanaRow1, hineRow1, wairuaRow1,
-  consMild, consModerate, consSevere, inheritedAheiId, originAheiId, 
+  consMild, consModerate, consSevere, inheritedAheiId, originAheiId, houseAheiId,
   
 ]);
 
@@ -497,7 +537,7 @@ useEffect(() => {
 }, []);
 
 // === POSITIONS (desktop vs mobile) ===
-type Rect = { left: number; top: number; width: number };
+type Rect = { left: number; top: number; width: number; rotate?: number; z?: number };
 type Positions = {
   // identity + artwork
   name: Rect; race: Rect; origin: Rect; house: Rect; weapon: Rect; speciesImg: Rect;
@@ -518,6 +558,12 @@ type Positions = {
     ahei3Select: Rect; ahei3Toggle: Rect; ahei3Desc: Rect;
   // ultimate
   ultimateTitle: Rect; ultimate1: Rect; ultimate2: Rect; ultimate3: Rect;
+    // dice total badge
+  diceTotal: Rect;
+  weaponImg: Rect;
+  weaponPopup: Rect;
+
+
 };
 
 const positionsDesktop: Positions = {
@@ -527,7 +573,9 @@ const positionsDesktop: Positions = {
   origin:{left:6,top:10,width:22},
   house:{left:6,top:14.5,width:22},
   weapon:{left:6,top:20.5,width:22},
-  speciesImg:{left:28,top:8,width:18},
+  speciesImg:{left:28,top:8,width:18, z: 6 },
+  weaponImg:{left:5, top:24, width:18, rotate: 0 },
+  weaponPopup: { left: 10, top: 22.5, width: 16 },
 
   // skills
   skillsTitle:{left:47,top:27,width:30},
@@ -576,6 +624,8 @@ ahei3Desc:  { left: 6, top: 63,   width: 37 },
   title1:{left:85,top:4,width:10},
   title2:{left:92,top:4,width:10},
   dicePanel:{left:45,top:82,width:80},
+  diceTotal:{ left:10.5, top:79, width:18 }, // tweak these %
+  
 };
 
 const positionsMobile: Positions = {
@@ -585,13 +635,15 @@ const positionsMobile: Positions = {
   origin:{left:6,top:10,width:31},
   house:{left:6,top:14,width:31},
   weapon:{left:6,top:20,width:20},
-  speciesImg:{left:32,top:20,width:18},
+  speciesImg:{left:32,top:20,width:18, z: 6 },
+  weaponImg:{left:10, top:25, width:18},
+  weaponPopup: { left: 10, top: 28, width: 30 },
 
   // skills
   skillsTitle:{left:50,top:34,width:30},
   skillsMod:{left:80,top:34,width:14},
   skillsBlock:{left:50,top:38,width:25},
-  skillsExtrasBlock:{left:83,top:38,width:12},
+  skillsExtrasBlock:{left:77,top:38,width:18},
 
   // ahei 1 split
   ahei1Select:{left:6,top:34,width:42.5},
@@ -628,6 +680,7 @@ ahei3Desc:  { left: 6, top: 56, width: 45 },
   title1:{left:83,top:4,width:5},
   title2:{left:91.5,top:4,width:5},
   dicePanel:{left:5,top:80,width:45},
+  diceTotal:{ left:6, top:37, width:50 }, // tweak these %
 
   // consequences
   consequencesTitle:{left:52,top:19,width:80},
@@ -712,50 +765,60 @@ return (
       </button>
 
       {/* Scatter box (dice + inline total) */}
+      {/* Scatter box only (dice stay here) */}
+<div
+  style={{
+    position: "relative",
+    width:  isMobile ? SCATTER_MOBILE.width  : SCATTER_DESKTOP.width,
+    height: isMobile ? SCATTER_MOBILE.height : SCATTER_DESKTOP.height,
+    marginTop: "-20px",
+    overflow: "visible",
+    flex: "0 0 auto",
+  }}
+>
+  {roll && roll.dice.map((d, i) => {
+    const p = dicePositions[i] || { dx: 0, dy: 0, rz: 0 };
+    return (
       <div
+        key={`${tossRun}-${i}`}
+        className={`die ${isRolling ? "rolling" : ""}`}
         style={{
-          position: "relative",
-          width:  isMobile ? SCATTER_MOBILE.width  : SCATTER_DESKTOP.width,
-          height: isMobile ? SCATTER_MOBILE.height : SCATTER_DESKTOP.height,
-          marginTop: "-20px",     // nudge up; set to 0 if you prefer
-          overflow: "visible",
-          flex: "0 0 auto",
-          // outline: "1px dashed rgba(0,0,0,.15)" // debug box
+          position: "absolute",
+          transform: `translate(${p.dx}px, ${p.dy}px) rotate(${p.rz}deg)`,
         }}
       >
-        {roll && roll.dice.map((d, i) => {
-          const p = dicePositions[i] || { dx: 0, dy: 0, rz: 0 };
-          return (
-            <div
-              key={`${tossRun}-${i}`}
-              className={`die ${isRolling ? "rolling" : ""}`}
-              style={{
-                position: "absolute",
-                transform: `translate(${p.dx}px, ${p.dy}px) rotate(${p.rz}deg)`,
-              }}
-            >
-              {d === 1 ? "＋" : d === -1 ? "−" : "·"}
-            </div>
-          );
-        })}
-
-        {roll && (
-          <div
-            style={{
-              position: "absolute",
-              right: 0,
-              bottom:48,
-              padding: "6px 8px",
-              fontSize: 20,
-              fontWeight: 700,
-              background: "rgba(109, 233, 255, 0.75)",
-              borderRadius: 4,
-            }}
-          >
-            Total: {roll.total}
-          </div>
-        )}
+        {d === 1 ? "＋" : d === -1 ? "−" : "·"}
       </div>
+    );
+  })}
+</div>
+
+{roll && (
+  <div
+    className="field"
+    style={{
+      left:  `${pos.diceTotal.left}%`,
+      top:   `${pos.diceTotal.top}%`,
+      width: `${pos.diceTotal.width}%`,
+      zIndex: 9,
+    }}
+  >
+    <div
+      style={{
+        display: "inline-block",
+        padding: "6px 8px",
+        fontSize: isMobile ? 16 : 20,
+        fontWeight: 700,
+        background: "rgba(109, 233, 255, 0.75)",
+        borderRadius: 4,
+      }}
+    >
+      Total: {roll.total}
+    </div>
+  </div>
+)}
+
+
 
       
     </div>
@@ -818,9 +881,7 @@ return (
   <option value="Tangata | Human Folk">Tangata | Human Folk</option>
 </select>
 
-        </div>
-
-
+</div>
         {/* Species image preview */}
 {race && SPECIES_IMG[race] && (
   <div
@@ -829,7 +890,8 @@ return (
       left:  `${pos.speciesImg.left}%`,
       top:   `${pos.speciesImg.top}%`,
       width: `${pos.speciesImg.width}%`,
-      pointerEvents: "none", // so clicks pass through, optional
+      zIndex: pos.speciesImg.z ?? 6,
+      pointerEvents: "none", // so it won’t block clicks
     }}
   >
     <img
@@ -840,11 +902,82 @@ return (
         height: "auto",
         display: "block",
         filter: "drop-shadow(0 2px 4px rgba(0,0,0,.25))",
-        opacity: 0.98, // subtle print-friendly look
+        opacity: 0.98,
       }}
     />
   </div>
 )}
+
+
+
+        {/* Weapon image preview (click to toggle popup) */}
+{weapon && (
+  <div
+    className="field"
+    style={{
+      left:  `${pos.weaponImg.left}%`,
+      top:   `${pos.weaponImg.top}%`,
+      width: `${pos.weaponImg.width}%`,
+      zIndex: pos.weaponImg.z ?? 12,
+    }}
+  >
+    <div
+      role="button"
+      tabIndex={0}
+      aria-label={`Show ${weapon} description`}
+      aria-expanded={showWeaponDesc}
+      onClick={() => setShowWeaponDesc(s => !s)}
+      onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") setShowWeaponDesc(s => !s); }}
+      style={{ cursor: "pointer" }}
+    >
+      <img
+        key={weapon}
+        src={`/weapons/${(WEAPON_FILE_OVERRIDES[weapon] ?? toWeaponSlug(weapon))}.png`}
+        alt={weapon}
+        style={{
+          width: "100%",
+          height: "auto",
+          display: "block",
+          filter: "drop-shadow(0 2px 4px rgba(0,0,0,.25))",
+          opacity: 0.98,
+          transform: pos.weaponImg.rotate ? `rotate(${pos.weaponImg.rotate}deg)` : undefined,
+          pointerEvents: "none",
+        }}
+      />
+    </div>
+  </div>
+)}
+{/* Weapon description popup (to the left) */}
+{weapon && showWeaponDesc && (
+  <div
+    className="field overlay-wrap overlay-wrap--weapon open"
+    style={{
+      left:  `${pos.weaponPopup.left}%`,
+      top:   `${pos.weaponPopup.top}%`,
+      width: `${pos.weaponPopup.width}%`,
+      zIndex: 28,
+    }}
+  >
+    <div className="overlay-box overlay-box--weapon">
+      <div style={{ display: "flex", justifyContent: "space-between", gap: 8 }}>
+        <strong>{WEAPON_INFO[weapon]?.title ?? weapon}</strong>
+        <button
+          className="btn"
+          onClick={() => setShowWeaponDesc(false)}
+          aria-label="Close weapon info"
+          style={{ padding: "2px 6px" }}
+        >
+          ✕
+        </button>
+      </div>
+      <div className="ahei-desc" style={{ marginTop: 6 }}>
+        {WEAPON_INFO[weapon]?.desc ?? "No description available."}
+      </div>
+    </div>
+  </div>
+)}
+
+
 
 
         {/* Ūkaipō | Origin */}
@@ -949,6 +1082,46 @@ return (
   ))}
 </select>
 </div>
+{/* Weapon image preview */}
+{weapon && (
+  <div
+    className="field"
+    style={{
+      left:  `${pos.weaponImg.left}%`,
+      top:   `${pos.weaponImg.top}%`,
+      width: `${pos.weaponImg.width}%`,
+      pointerEvents: "none",
+    }}
+  >
+    <img
+      key={weapon}
+      src={`/weapons/${(WEAPON_FILE_OVERRIDES[weapon] ?? toWeaponSlug(weapon))}.png`}
+      alt={weapon}
+      style={{
+        width: "100%",
+        height: "auto",
+        display: "block",
+        filter: "drop-shadow(0 2px 4px rgba(0,0,0,.25))",
+        opacity: 0.98,
+        transform: pos.weaponImg.rotate ? `rotate(${pos.weaponImg.rotate}deg)` : undefined, 
+        zIndex: 30, // 👈 sits on top
+        position: "relative", // ensure zIndex applie
+      }}
+      onError={(e) => {
+        // If the override path 404s, fall back to slug
+        const el = e.currentTarget as HTMLImageElement;
+        const fallback = `/weapons/${toWeaponSlug(weapon)}.png`;
+        if (el.src.endsWith(fallback)) {
+          // already on fallback → hide if still missing
+          el.style.display = "none";
+        } else {
+          el.src = fallback;
+        }
+      }}
+    />
+  </div>
+)}
+
 
         {/* PŪKENGA | SKILLS (title only) */}
 <div
@@ -1035,24 +1208,28 @@ return (
     left:  `${pos.skillsExtrasBlock.left}%`,
     top:   `${pos.skillsExtrasBlock.top}%`,
     width: `${pos.skillsExtrasBlock.width}%`,
-    zIndex: 4,
+    zIndex: 7,
   }}
 >
   <div className="extras-column">
     {Array.from({ length: 16 }).map((_, i) => (
       <div key={i} className="extra-row">
         <input
-          type="number"
-          className="skill-extra"
-          value={skillExtras[i] ?? 0}
-          onChange={(e) => {
-            const v = parseInt(e.target.value || "0", 10);
-            const next = [...skillExtras];
-            next[i] = Number.isNaN(v) ? 0 : v;
-            setSkillExtras(next);
-          }}
-          placeholder="0"
-        />
+  type="text"
+  inputMode="numeric"
+  pattern="-?[0-9]*"
+  className="skill-extra"
+  defaultValue={String(skillExtras[i] ?? 0)}
+  onFocus={(e) => e.currentTarget.select()}
+  onBlur={(e) => {
+    const v = parseInt(e.target.value.trim(), 10);
+    const next = [...skillExtras];
+    next[i] = Number.isNaN(v) ? 0 : v;
+    setSkillExtras(next);
+  }}
+  placeholder="0"
+/>
+
       </div>
     ))}
   </div>

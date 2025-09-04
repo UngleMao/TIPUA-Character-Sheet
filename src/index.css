@@ -218,13 +218,13 @@
   display: flex;
   align-items: center;
   gap: 6px;          /* space between dropdown and base value */
-  margin-bottom: 8px;
+  margin-bottom: 10px;
   width: 400px;
 
   
 }
 .skill-row select {
-  padding: 9.2px 10px;   /* same as .skill-base */
+  padding: 9.2px 12px;   /* same as .skill-base */
 }
 
 
@@ -940,6 +940,139 @@
 .overlay-wrap--origin    { z-index: 13; }   /* or 15 if you want it on top */
 
 
+@media (max-width: 640px) {
+  .extras-column .extra-row { height: 18px; }  /* slimmer than 24px */
+  .skill-extra {
+    width: 18px;          /* small but still tappable */
+    font-size: 10px;      /* matches rest of mobile text scale */
+    padding: 2px;         /* less inner space */
+  }
+}
+/* === Mobile row-height sync (keep widths) === */
+@media (max-width: 640px) {
+  :root {
+    --rowH-mobile: 16px;   /* tweak 14–18px to taste */
+    --rowFont-mobile: 9px; /* keep text crisp but small */
+  }
+
+  /* Skills dropdowns (left column) */
+  .skills-column .skill-row { margin-bottom: 4.5px; }
+  .skills-column .skill-row select {
+    height: var(--rowH-mobile) !important;
+    line-height: var(--rowH-mobile) !important;
+    padding: 0 2px !important;
+    font-size: var(--rowFont-mobile) !important;
+  }
+
+  /* Base value box beside each select */
+  .skill-base {
+    height: var(--rowH-mobile) !important;
+    line-height: var(--rowH-mobile) !important;
+    padding: 0 2px !important;
+    font-size: var(--rowFont-mobile) !important;
+  }
+
+  /* Extras column (right) — match the same row height */
+  .extras-column .extra-row {
+    height: var(--rowH-mobile) !important;
+  }
+  .extras-column .extra-row .skill-extra {
+    height: 100% !important;
+    line-height: var(--rowH-mobile) !important;
+    width: 16px !important;           /* stays narrow */
+    font-size: var(--rowFont-mobile) !important;
+    padding: 0 2px !important;
+  }
+}
+/* Default (desktop ≥ 641px): top-right inside the scatter box */
+.dice-total {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  font-size: 20px;
+  font-weight: 700;
+  padding: 6px 8px;
+  background: rgba(109, 233, 255, 0.75);
+  border-radius: 4px;
+  z-index: 2;          /* stays above dice */
+}
+/* Mobile (≤ 640px): bottom-center inside the scatter box */
+@media (max-width: 640px) {
+  .dice-total {
+    top: auto;
+    right: auto;
+    bottom: 6px;
+    left: 100%;
+    transform: translateX(-50%);
+    font-size: 16px;
+    padding: 4px 6px;
+  }
+}
+.dice-total {
+  text-align: center;
+  margin-top: 8px;         /* space above Roll button */
+  font-size: 20px;
+  font-weight: 700;
+  background: rgba(109, 233, 255, 0.75);
+  border-radius: 4px;
+  padding: 6px 8px;
+}
+
+/* Mobile override */
+@media (max-width: 640px) {
+  .dice-total {
+    font-size: 16px;
+    padding: 4px 6px;
+    margin-top: 6px;      /* a bit tighter on phones */
+  }
+}
+
+/* Weapon popup overlay */
+.overlay-wrap--weapon { z-index: 28; }
+
+.overlay-box--weapon {
+  background: #fff;
+  border: 2px solid #111;
+  border-radius: 8px;
+  box-shadow: 0 6px 16px rgba(0,0,0,.25);
+  padding: 10px 12px;
+  max-height: 240px;
+  overflow: auto;
+}
+.field.overlay-wrap { position: absolute; display: none; }
+.field.overlay-wrap.open { display: block; }
+
+/* --- Weapon popup: subtle slide-in --- */
+.overlay-wrap--weapon.open .overlay-box--weapon {
+  animation: weaponSlideIn 180ms cubic-bezier(.2,.7,.2,1) both;
+  will-change: transform, opacity;
+}
+
+/* Desktop: slide in from the right (toward the image), a little lift */
+@keyframes weaponSlideIn {
+  from {
+    transform: translateX(12px) translateY(0) scale(0.995);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0) translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+/* Mobile: slightly shorter distance so it feels snappy on small screens */
+@media (max-width: 640px) {
+  .overlay-wrap--weapon.open .overlay-box--weapon {
+    animation-duration: 140ms;
+  }
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .overlay-wrap--weapon.open .overlay-box--weapon {
+    animation: none;
+  }
+}
 
 
 
