@@ -713,29 +713,6 @@
 
 
 .btn.toggle-desc { outline: 1px dashed red !important; }
-/* --- Native <details> toggle for the Mana Tuku Iho box --- */
-
-/* Style the summary as a button */
-.ahei-locked >  {
-  margin-top: 4px;
-  padding: 4px 6px;
-  font-size: 12px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  background: #ffffff73;
-  cursor: pointer;
-  list-style: none;
-  display: inline-block;
-  position: relative;
-  z-index: 1000;           /* sit above anything nearby */
-}
-
-/* Hide the default marker/triangle */
-.ahei-locked > ::-webkit-details-marker { display: none; }
-
-/* Dynamic label text without JS */
-.ahei-locked >  { content: "Show details"; font-weight: 600; }
-.ahei-locked[open] >  { content: "Hide details"; }
 
 /* On phones: start collapsed; show content only when open */
 @media (max-width: 640px) {
@@ -1074,5 +1051,111 @@
   }
 }
 
+/* Ultimate overlays — look/feel like other ability popups */
+.field.overlay-wrap--ult { display: none; position: absolute; }
+.field.overlay-wrap--ult.open { display: block; }
 
+.overlay-box--ult {
+  background: #fff;
+  border: 2px solid #111;
+  border-radius: 8px;
+  box-shadow: 0 6px 16px rgba(0,0,0,.25);
+  padding: 10px 12px;
+  max-height: 220px;
+  overflow: auto;
+}
 
+/* Make sure these float above the toggle button */
+.field.overlay-wrap--ult { z-index: 22; }
+
+/* Optional: subtle slide like your weapon popup */
+.overlay-wrap--ult.open .overlay-box--ult {
+  animation: ultSlideIn 160ms cubic-bezier(.2,.7,.2,1) both;
+}
+@keyframes ultSlideIn {
+  from { transform: translateY(-6px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .overlay-wrap--ult.open .overlay-box--ult { animation: none; }
+}
+
+/* Make disabled selects look like normal āhei dropdowns */
+.select-underline:disabled {
+  opacity: 1;
+  color: #000;
+  -webkit-text-fill-color: #000; /* Safari */
+  background: rgba(255, 255, 255, 0.5);
+  cursor: default;
+}
+
+/* Make disabled selects look like normal āhei dropdowns */
+.select-underline:disabled {
+  opacity: 1;
+  color: #000;
+  -webkit-text-fill-color: #000; /* Safari */
+  background: rgba(255, 255, 255, 0.5);
+  cursor: default;
+}
+.select-underline:disabled {
+  border-bottom-color: #000; /* match enabled state */
+}
+/* Match your enabled select’s padding exactly */
+.select-underline {
+  padding: 2px 2px 3px 2px;
+}
+.select-underline:disabled {
+  padding: 2px 2px 3px 2px;
+}
+/* consistent text sizing on iOS */
+html { -webkit-text-size-adjust: 100%; }
+
+/* prevent iOS zoom jump on tap for inputs/selects */
+@supports (-webkit-touch-callout: none) {
+  input, select, textarea, button {
+    font-size: 16px; /* iOS won't zoom if >=16px */
+  }
+}
+/* flatten Safari-specific control chrome */
+input, select, textarea, button {
+  -webkit-appearance: none;
+  appearance: none;
+  border-radius: 4px; /* keep your rounded look */
+}
+
+/* keep disabled selects visually identical */
+.select-underline:disabled {
+  -webkit-text-fill-color: #000;
+}
+/* global font rendering smoothing */
+html, body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* headings/labels: nail line-height so wrapping doesn't surprise you */
+.field-label,
+.mini-label,
+.ult-label,
+.ahei-desc {
+  line-height: 1.2; /* or 1.15 – pick one and keep it consistent */
+  letter-spacing: 0; /* Safari sometimes renders spacing slightly wider */
+}
+/* ensure overlays are really solid layers */
+.overlay-box,
+.overlay-box--weapon,
+.overlay-box--ult {
+  background: #fff !important;
+}
+.sheet { position: relative; }         /* the reference */
+.field { position: absolute; }         /* children place via left/top % */
+/* contain content to the visual viewport */
+@supports (-webkit-touch-callout: none) {
+  body { overflow-x: hidden; }
+}
+input, select, textarea {
+  box-shadow: none;
+  border: none;               /* you draw your own underline */
+  background-clip: padding-box;
+}

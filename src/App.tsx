@@ -213,6 +213,86 @@ const WEAPON_INFO: Record<WeaponKey, { title: string; desc: string }> = {
   "Wahaika":    { title: "Wahaika",    desc: "Hand held striking weapon with a stylized recurved blade; used to trap limbs and weapons and control the battle at close range. The outside blade is sharpened and used for slashing while the flat face is used to block and strike at the opponent." },
   "Hoeroa":     { title: "Hoeroa",     desc: "Long curved staff carved with precision from the bones of an ancient beast; Proficient extended strikes, thrusts and blocks with whip-like arcs stun and slice opponents with ease. Once the momentum of a Hoeroa begins it is hard to stop." },
 };
+type WeaponUltimate = {
+  id: string;
+  title: string;      // the named ultimate (shows in a select-style bar)
+  physical: string;   // effect text
+  mental: string;
+  spiritual: string;
+};
+
+export const WEAPON_ULTIMATES: Record<WeaponKey, WeaponUltimate> = {
+  "Tewhatewha": {
+    id: "ult-tewhatewha",
+    title: "Kauwhanganui | Radiant Arc",
+    physical: "Echoing the arc of Uenuku - a broad strike that cuts through the darkness, trailing sacred light. Instantly kills a lesser enemy. Explodes in blinding light, stunning all enemies in line of sight. Larger enemies are blinded. Ngārara suffers a mild burn",
+    mental:   "Echoing the arc of Uenuku - a broad strike that cuts through the darkness, trailing sacred light. Disorients all enemies, including Ngārara. Forces them to attack random targets next turn",
+    spiritual:"Echoing the arc of Uenuku - a broad strike that cuts through the darkness, trailing sacred light. Purges corruption from lesser enemies. Larger enemies lose spiritual/magical abilities for one turn. Ngārara is unaffected.",
+  },
+  "Kotiate": {
+    id: "ult-kotiate",
+    title: "Taiharatua | Gutrender",
+    physical: "A savage side strike that rips into the torso and tears out in a spray of gore. Instantly kills a lesser enemy. Larger enemies suffer severe consequences. Ngārara takes a minor cut..",
+    mental:   "A savage side strike that rips into the torso and tears out in a spray of gore. Shocks enemies in line of sight, freezing them for one turn. Ngārara is unaffected.",
+    spiritual:"A savage side strike that rips into the torso and tears out in a spray of gore. Wrenches soul of larger enemies, leaving them spiritually vulnerable for three turns. Ngārara is unaffected.",
+  },
+  "Taiaha": {
+    id: "ult-taiaha",
+    title: "Kirihaehae | Razor to Flesh",
+    physical: "A single fluid motion - slicing flesh and sinew with surgical precision. Instantly kills a lesser enemy with a clean cut. Larger enemies take severe or moderate damage. Ngārara suffers a shallow wound.",
+    mental:   "A single fluid motion - slicing flesh and sinew with surgical precision. Sparks panic. Lesser enemies flee. Larger enemies hesitate and skip their next attack. Ngārara is unmoved.",
+    spiritual:"A single fluid motion - slicing flesh and sinew with surgical precision. Severs spiritual ties. Lesser enemies become husks. Larger enemies lose spiritual bond with Ngārara.",
+  },
+  "Tī": {
+    id: "ult-ti",
+    title: "Kuratakai | Poison Fang",
+    physical: "A fast-acting poisonous stab that instantly creates hallucinations. Kills a lesser enemy with a hidden heart stab. Larger enemies suffer severe damage. Ngārara receives a stinging flesh wound",
+    mental:   "A fast-acting poisonous stab that instantly creates hallucinations. Enemies (including Ngārara) are disoriented. Next attack deals half damage..",
+    spiritual:"A fast-acting poisonous stab that instantly creates hallucinations. Larger enemies begin fading, dying after three turns unless they are healed. Ngārara resists.",
+  },
+  "Timotimo": {
+    id: "ult-timotimo",
+    title: "Hoitōtara | Rootbound",
+    physical: "Vines burst from the ground, wrapping and dragging victims into darkness. Vines burst from the ground, wrapping and dragging victims into darkness. Kills a lesser enemy via crushing/suffocation. Larger enemies are restrained for one turn with moderate damage. Ngārara receives surface lacerations.",
+    mental:   "Vines burst from the ground, wrapping and dragging victims into darkness. Causes fear. Lesser enemies within line of sight skip next move/action. Larger enemies are distracted, lowering defence.",
+    spiritual:"Vines burst from the ground, wrapping and dragging victims into darkness. Vines absorb spiritual residue, weakening blessings or protections.",
+  },
+  "Kō": {
+    id: "ult-ko",
+    title: "Tikikai | Devour the Fallen",
+    physical: "With perfect timing, redirects the enemy weapon or power against them. Their wounds then burst with rapid growing plant life as their body disentegrates from within. Kills a lesser enemy by turning their own weapon against them. Larger enemies take moderate or severe damage. Ngārara is either grazed or injured - depending on the severity of its own previous attack.",
+    mental:   "With perfect timing, redirects the enemy weapon or power against them. Their wounds then burst with rapid growing plant life as their body disentegrates from within. Nearby enemies are shocked. Smaller enemies flee. Larger enemies will attempt to aid their fallen ally, to no avail.",
+    spiritual:"With perfect timing, redirects the enemy weapon or power against them. Their wounds then burst with rapid growing plant life as their body disentegrates from within. Severs aggressive intent. Spiritual enemies can't activate curses or spiritual powers next turn. Ngārara is unaffected spiritually.",
+  },
+  "Toki Kakauroa": {
+    id: "ult-tokikakauroa",
+    title: "Ngututaua | Crestfall",
+    physical: "A ruthless cleave that breaks bones, lines and resolve. Kills a lesser enemy. Larger enemies (excluding Ngārara) suffer a critical hit. Ngārara receives a minor wound.",
+    mental:   "A ruthless cleave that breaks bones, lines and resolve. Fractures morale. Enemies in line of sight get penalties to their next attack. DM rolls with disadvantage if rolling for an attack outcome.",
+    spiritual:"A ruthless cleave that breaks bones, lines and resolve. Splits Spirit from Physical. Target (Excluding Ngārara) becomes a Kēhua | Ghost, as their body dies. If they are already a Kēhua they fade into nothing. Any previous spiritual protections are shattered.",
+  },
+  "Mere Tūhua": {
+    id: "ult-meretuhua",
+    title: "Kawau Moeara | Sleepless Blade",
+    physical: "A cut so subtle, the enemy only realises they have been slain moments later. Kills a lesser enemy instantly. Larger enemies suffer delayed severe damage (triggers next turn).",
+    mental:   "A cut so subtle, the enemy only realises they have been slain moments later. Silent death unnerves enemies within line of sight. Larger enemies retreat backwards out of range and re-assess their attack, unsure where it came from.",
+    spiritual:"A cut so subtle, the enemy only realises they have been slain moments later. Unaware that they have been severed from their body, the spirit of a slain enemy remains in place as restless kēhua | Ghost, unless enemy is already a kēhua, in which case they fade into nothing. Ngārara receives a spiritual cut - severing connection to enemies within it's own line of sight for 2 turns",
+  },
+  "Wahaika": {
+    id: "ult-wahaika",
+    title: "Nihorere| Bladed Scales",
+    physical: "A relentless flurry of slicing blows - drowning the enemy with unstoppable strikes. Instantly kills up to three lesser enemies in range. Larger enemies take severe damage.",
+    mental:   "A relentless flurry of slicing blows - drowning the enemy with unstoppable strikes. Dazes observers with the speed of the attack. Remaining enemies attempt their next action with disadvantage (if rolling)",
+    spiritual:"A relentless flurry of slicing blows - drowning the enemy with unstoppable strikes. Interrupts all spiritual focus. Enemies channeling powers are disrupted, including any spiritual protections. Ngārara’s Influence is lessened for one turn within line of sight",
+  },
+  "Hoeroa": {
+    id: "ult-hoeroa",
+    title: "Taiwhakaea | Tidal Surge",
+    physical: "A sweeping arc carrying a surge of water that overwhelms the enemy - crushing and scattering all in its wake. Sweeps enemies off their feet. All lesser enemies within range are killed (or drowned if near water). Larger enemies are staggered. Ngārara resists the surge.",
+    mental:   "A sweeping arc carrying a surge of water that overwhelms the enemy - crushing and scattering all in its wake. Instills dread. Remaining enemies hesitate on their next action.",
+    spiritual:"A sweeping arc carrying a surge of water that overwhelms the enemy - crushing and scattering all in its wake. Disrupts the natural flow of spiritual energy. Larger enemies Spiritual attacks are disabled permanently. Ngārara holds its ground but its Spiritual abilities are disabled for one turn.",
+  },
+};
 
 
 // Exactly TWO allowed weapons per Whare (edit as you like)
@@ -363,6 +443,17 @@ const [showWeaponDesc, setShowWeaponDesc] = useState(false);
 // auto-close the popup whenever the selected weapon changes
 useEffect(() => {
   setShowWeaponDesc(false);
+}, [weapon]);
+// Ultimate detail toggles
+const [showUltPhys, setShowUltPhys] = useState(false);
+const [showUltMent, setShowUltMent] = useState(false);
+const [showUltSpir, setShowUltSpir] = useState(false);
+
+// Reset when weapon changes
+useEffect(() => {
+  setShowUltPhys(false);
+  setShowUltMent(false);
+  setShowUltSpir(false);
 }, [weapon]);
 
 
@@ -562,6 +653,17 @@ type Positions = {
   diceTotal: Rect;
   weaponImg: Rect;
   weaponPopup: Rect;
+  ultTitleBar: Rect;
+  ultPhysDesc: Rect;
+  ultMentDesc: Rect;
+  ultSpirDesc: Rect;
+  ultPhysToggle: Rect;
+  ultMentToggle: Rect;
+  ultSpirToggle: Rect;
+  ultPhysLabel: Rect;
+  ultMentLabel: Rect;
+  ultSpirLabel: Rect;
+  
 
 
 };
@@ -576,6 +678,7 @@ const positionsDesktop: Positions = {
   speciesImg:{left:28,top:8,width:18, z: 6 },
   weaponImg:{left:5, top:24, width:18, rotate: 0 },
   weaponPopup: { left: 10, top: 22.5, width: 16 },
+
 
   // skills
   skillsTitle:{left:47,top:27,width:30},
@@ -625,7 +728,16 @@ ahei3Desc:  { left: 6, top: 63,   width: 37 },
   title2:{left:92,top:4,width:10},
   dicePanel:{left:45,top:82,width:80},
   diceTotal:{ left:10.5, top:79, width:18 }, // tweak these %
-  
+  ultPhysDesc:{ left: 10, top: 75,   width: 35, z: 60 },
+  ultMentDesc:{ left: 10, top: 81, width: 35, z: 22 },
+  ultSpirDesc:{ left: 10, top: 87,   width: 35, z: 24 },
+  ultTitleBar:{ left: 6, top: 71, width: 37, z: 12 },
+  ultPhysToggle:{ left: 6, top: 75, width: 19 }, // near “Physical effect”
+  ultMentToggle:{ left: 6, top: 81, width: 19 }, // near “Mental effect”
+  ultSpirToggle:{ left: 6, top: 87, width: 19 }, // near “Spiritual effect”
+  ultPhysLabel: { left: 6,  top: 74, width: 20 },
+  ultMentLabel: { left: 6,  top: 80, width: 20 },
+  ultSpirLabel: { left: 6,  top: 86, width: 20 },
 };
 
 const positionsMobile: Positions = {
@@ -634,7 +746,7 @@ const positionsMobile: Positions = {
   race:{left:6,top:5.5,width:31},
   origin:{left:6,top:10,width:31},
   house:{left:6,top:14,width:31},
-  weapon:{left:6,top:20,width:20},
+  weapon:{left:6,top:20,width:25},
   speciesImg:{left:32,top:20,width:18, z: 6 },
   weaponImg:{left:10, top:25, width:18},
   weaponPopup: { left: 10, top: 28, width: 30 },
@@ -657,7 +769,7 @@ const positionsMobile: Positions = {
 
   // ahei 3 split
   // add:
-ahei3Select:{ left: 6, top: 50, width: 45 },
+ahei3Select:{ left: 6, top: 50, width: 43 },
 ahei3Toggle:{ left: 6, top: 54, width: 28 },
 ahei3Desc:  { left: 6, top: 56, width: 45 },
 
@@ -667,6 +779,16 @@ ahei3Desc:  { left: 6, top: 56, width: 45 },
   ultimate1:{left:6,top:59,width:56},
   ultimate2:{left:6,top:66.5,width:56},
   ultimate3:{left:6,top:74,width:56},
+  ultPhysDesc:{ left: 12, top: 64,   width: 56, z: 20 },
+  ultMentDesc:{ left: 12, top: 69, width: 56, z: 22 },
+  ultSpirDesc:{ left: 12, top: 74,   width: 56, z: 24 },
+  ultTitleBar:{ left: 6, top: 59, width: 37, z: 12 },
+  ultPhysToggle:{ left: 6, top: 63.5, width: 24 },
+  ultMentToggle:{ left: 6, top: 68.5, width: 24 },
+  ultSpirToggle:{ left: 6, top: 74.2, width: 24 },
+  ultPhysLabel: { left: 6,  top: 62, width: 40 },
+  ultMentLabel: { left: 6,  top: 67, width: 40 },
+  ultSpirLabel: { left: 6,  top: 72.5, width: 40 },
 
   // stress titles + rows
   tinanaTitle:{left:40,top:7.5,width:60},
@@ -687,6 +809,8 @@ ahei3Desc:  { left: 6, top: 56, width: 45 },
   consequencesMild:{left:50,top:22,width:45},
   consequencesModerate:{left:50,top:26,width:45},
   consequencesSevere:{left:50,top:30,width:45},
+
+
 };
 
 const [pos, setPos] = useState<Positions>(isMobile ? positionsMobile : positionsDesktop);
@@ -910,7 +1034,8 @@ return (
 
 
 
-        {/* Weapon image preview (click to toggle popup) */}
+
+{/* Weapon image preview (click to toggle popup) */}
 {weapon && (
   <div
     className="field"
@@ -943,10 +1068,20 @@ return (
           transform: pos.weaponImg.rotate ? `rotate(${pos.weaponImg.rotate}deg)` : undefined,
           pointerEvents: "none",
         }}
+        onError={(e) => {
+          const el = e.currentTarget as HTMLImageElement;
+          const fallback = `/weapons/${toWeaponSlug(weapon)}.png`;
+          if (el.src.endsWith(fallback)) {
+            el.style.display = "none"; // hide if fallback also missing
+          } else {
+            el.src = fallback;
+          }
+        }}
       />
     </div>
   </div>
 )}
+
 {/* Weapon description popup (to the left) */}
 {weapon && showWeaponDesc && (
   <div
@@ -1082,45 +1217,7 @@ return (
   ))}
 </select>
 </div>
-{/* Weapon image preview */}
-{weapon && (
-  <div
-    className="field"
-    style={{
-      left:  `${pos.weaponImg.left}%`,
-      top:   `${pos.weaponImg.top}%`,
-      width: `${pos.weaponImg.width}%`,
-      pointerEvents: "none",
-    }}
-  >
-    <img
-      key={weapon}
-      src={`/weapons/${(WEAPON_FILE_OVERRIDES[weapon] ?? toWeaponSlug(weapon))}.png`}
-      alt={weapon}
-      style={{
-        width: "100%",
-        height: "auto",
-        display: "block",
-        filter: "drop-shadow(0 2px 4px rgba(0,0,0,.25))",
-        opacity: 0.98,
-        transform: pos.weaponImg.rotate ? `rotate(${pos.weaponImg.rotate}deg)` : undefined, 
-        zIndex: 30, // 👈 sits on top
-        position: "relative", // ensure zIndex applie
-      }}
-      onError={(e) => {
-        // If the override path 404s, fall back to slug
-        const el = e.currentTarget as HTMLImageElement;
-        const fallback = `/weapons/${toWeaponSlug(weapon)}.png`;
-        if (el.src.endsWith(fallback)) {
-          // already on fallback → hide if still missing
-          el.style.display = "none";
-        } else {
-          el.src = fallback;
-        }
-      }}
-    />
-  </div>
-)}
+
 
 
         {/* PŪKENGA | SKILLS (title only) */}
@@ -1219,16 +1316,17 @@ return (
   inputMode="numeric"
   pattern="-?[0-9]*"
   className="skill-extra"
-  defaultValue={String(skillExtras[i] ?? 0)}
-  onFocus={(e) => e.currentTarget.select()}
-  onBlur={(e) => {
-    const v = parseInt(e.target.value.trim(), 10);
+  value={String(skillExtras[i] ?? 0)}
+  onChange={(e) => {
+    const raw = e.target.value.trim();
     const next = [...skillExtras];
-    next[i] = Number.isNaN(v) ? 0 : v;
+    next[i] = raw === "" || raw === "-" ? 0 : (parseInt(raw, 10) || 0);
     setSkillExtras(next);
   }}
+  onFocus={(e) => e.currentTarget.select()}
   placeholder="0"
 />
+
 
       </div>
     ))}
@@ -1424,73 +1522,217 @@ return (
     <span className="label-black">ANCIENT ABILITY</span>
   </div>
 </div>
+{/* Weapon ultimate title — locked, styled like āhei select */}
+{weapon && WEAPON_ULTIMATES[weapon] && (
+  <div
+    className="field field--lg field--compact"
+    style={{
+      left:  `${pos.ultTitleBar.left}%`,
+      top:   `${pos.ultTitleBar.top}%`,
+      width: `${pos.ultTitleBar.width}%`,
+      zIndex: (pos as any).ultTitleBar?.z ?? 12,
+    }}
+  >
+    <select
+      className="select-underline"
+      value="__locked"
+      disabled
+      aria-label="Weapon ultimate title"
+      onChange={() => {}}
+    >
+      <option value="__locked">{WEAPON_ULTIMATES[weapon].title}</option>
+    </select>
+  </div>
+)}
 
 
-        {/* Ultimate Āhei — Physical effect */}
-        <div
-          className="field field--lg field--compact"
-          style={{
-            left:  `${pos.ultimate1.left}%`,
-            top:   `${pos.ultimate1.top}%`,
-            width: `${pos.ultimate1.width}%`,
-            height: "60px",
-          }}
-          
-        >
-          <label className="mini-label ult-label" style={{ fontSize: "var(--ult-label-size)" }}>
+
+{/* Ultimate — Physical effect */}
+<div
+  className="field field--lg field--compact"
+  style={{ left: `${pos.ultimate1.left}%`, top: `${pos.ultimate1.top}%`, width: `${pos.ultimate1.width}%` }}
+>
+
+
+  {weapon && WEAPON_ULTIMATES[weapon] && (
+    <>
+      
+
+      
+    </>
+  )}
+</div>
+{weapon && WEAPON_ULTIMATES[weapon] && (
+  <div
+    className="field field--toggle"
+    style={{
+      left:  `${pos.ultPhysToggle.left}%`,
+      top:   `${pos.ultPhysToggle.top}%`,
+      width: `${pos.ultPhysToggle.width}%`,
+    }}
+  >
+    <button
+      type="button"
+      className="btn toggle-desc"
+      onClick={() => setShowUltPhys(s => !s)}
+    >
+      {showUltPhys ? "Hide details" : "Show details"}
+    </button>
+  </div>
+)}
+
+
+{/* Ultimate — Mental effect */}
+<div
+  className="field field--lg field--compact"
+  style={{ left: `${pos.ultimate2.left}%`, top: `${pos.ultimate2.top}%`, width: `${pos.ultimate2.width}%` }}
+>
+
+  {weapon && WEAPON_ULTIMATES[weapon] && (
+    <>
+      
+
+      
+    </>
+  )}
+</div>
+{weapon && WEAPON_ULTIMATES[weapon] && (
+  <div
+    className="field field--toggle"
+    style={{
+      left:  `${pos.ultMentToggle.left}%`,
+      top:   `${pos.ultMentToggle.top}%`,
+      width: `${pos.ultMentToggle.width}%`,
+    }}
+  >
+    <button
+      type="button"
+      className="btn toggle-desc"
+      onClick={() => setShowUltMent(s => !s)}
+    >
+      {showUltMent ? "Hide details" : "Show details"}
+    </button>
+  </div>
+)}
+
+
+{/* Ultimate — Spiritual effect */}
+<div
+  className="field field--lg field--compact"
+  style={{ left: `${pos.ultimate3.left}%`, top: `${pos.ultimate3.top}%`, width: `${pos.ultimate3.width}%` }}
+>
+
+  {weapon && WEAPON_ULTIMATES[weapon] && (
+    <>
+      
+
+      
+      
+    </>
+  )}
+</div>
+{weapon && WEAPON_ULTIMATES[weapon] && (
+  <div
+    className="field field--toggle"
+    style={{
+      left:  `${pos.ultSpirToggle.left}%`,
+      top:   `${pos.ultSpirToggle.top}%`,
+      width: `${pos.ultSpirToggle.width}%`,
+    }}
+  >
+    <button
+      type="button"
+      className="btn toggle-desc"
+      onClick={() => setShowUltSpir(s => !s)}
+    >
+      {showUltSpir ? "Hide details" : "Show details"}
+    </button>
+  </div>
+)}
+
+{/* Ultimate labels (positioned) */}
+<div
+  className="field mini-label ult-label"
+  style={{
+    left:  `${pos.ultPhysLabel.left}%`,
+    top:   `${pos.ultPhysLabel.top}%`,
+    width: `${pos.ultPhysLabel.width}%`,
+  }}
+>
   Physical effect
-</label>
-          <textarea
-            className="textarea-underline ultimate"
-            value={ult1}
-            onChange={(e) => setUlt1(e.target.value)}
-            rows={5}
-          />
-        </div>
+</div>
 
-        {/* Ultimate Āhei — Mental effect */}
-        <div
-          className="field field--lg field--compact"
-          style={{
-            left:  `${pos.ultimate2.left}%`,
-            top:   `${pos.ultimate2.top}%`,
-            width: `${pos.ultimate2.width}%`,
-            height: "60px",
-          }}
-          
-        >
-         <label className="mini-label ult-label" style={{ fontSize: "var(--ult-label-size)" }}>
+<div
+  className="field mini-label ult-label"
+  style={{
+    left:  `${pos.ultMentLabel.left}%`,
+    top:   `${pos.ultMentLabel.top}%`,
+    width: `${pos.ultMentLabel.width}%`,
+  }}
+>
   Mental effect
-</label>
-          <textarea
-            className="textarea-underline ultimate"
-            value={ult2}
-            onChange={(e) => setUlt2(e.target.value)}
-            rows={5}
-          />
-        </div>
+</div>
 
-        {/* Ultimate Āhei — Spiritual effect */}
-        <div
-          className="field field--lg field--compact"
-          style={{
-            left:  `${pos.ultimate3.left}%`,
-            top:   `${pos.ultimate3.top}%`,
-            width: `${pos.ultimate3.width}%`,
-            height: "60px",
-          }}
-          
-        >
-          <label className="mini-label ult-label" style={{ fontSize: "var(--ult-label-size)" }}>
+<div
+  className="field mini-label ult-label"
+  style={{
+    left:  `${pos.ultSpirLabel.left}%`,
+    top:   `${pos.ultSpirLabel.top}%`,
+    width: `${pos.ultSpirLabel.width}%`,
+  }}
+>
   Spiritual effect
-</label>
-          <textarea
-            className="textarea-underline ultimate"
-            value={ult3}
-            onChange={(e) => setUlt3(e.target.value)}
-            rows={5}
-          />
-        </div>
+</div>
+{/* === ULTIMATE OVERLAYS (top-level under .sheet) === */}
+{weapon && WEAPON_ULTIMATES[weapon] && showUltPhys && (
+  <div
+    className="field overlay-wrap overlay-wrap--ult open"
+    style={{
+      left:  `${pos.ultPhysDesc.left}%`,
+      top:   `${pos.ultPhysDesc.top}%`,
+      width: `${pos.ultPhysDesc.width}%`,
+      zIndex: pos.ultPhysDesc.z ?? 22,
+    }}
+  >
+    <div className="overlay-box overlay-box--ult">
+      <div className="ahei-desc">{WEAPON_ULTIMATES[weapon].physical}</div>
+    </div>
+  </div>
+)}
+
+{weapon && WEAPON_ULTIMATES[weapon] && showUltMent && (
+  <div
+    className="field overlay-wrap overlay-wrap--ult open"
+    style={{
+      left:  `${pos.ultMentDesc.left}%`,
+      top:   `${pos.ultMentDesc.top}%`,
+      width: `${pos.ultMentDesc.width}%`,
+      zIndex: pos.ultMentDesc.z ?? 22,
+    }}
+  >
+    <div className="overlay-box overlay-box--ult">
+      <div className="ahei-desc">{WEAPON_ULTIMATES[weapon].mental}</div>
+    </div>
+  </div>
+)}
+
+{weapon && WEAPON_ULTIMATES[weapon] && showUltSpir && (
+  <div
+    className="field overlay-wrap overlay-wrap--ult open"
+    style={{
+      left:  `${pos.ultSpirDesc.left}%`,
+      top:   `${pos.ultSpirDesc.top}%`,
+      width: `${pos.ultSpirDesc.width}%`,
+      zIndex: pos.ultSpirDesc.z ?? 22,
+    }}
+  >
+    <div className="overlay-box overlay-box--ult">
+      <div className="ahei-desc">{WEAPON_ULTIMATES[weapon].spiritual}</div>
+    </div>
+  </div>
+)}
+
+
       
 {/* TINANA | PHYSICAL STRESS */}
 <div
