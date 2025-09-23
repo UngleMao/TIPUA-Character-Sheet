@@ -738,7 +738,7 @@
 
 /* If you want the button aligned right */
 .ahei-locked { text-align: left; }
-.ahei-locked >  { display: inline-block; }
+
 /* MOBILE: make the details panel overlay other fields when open */
 
   
@@ -1158,4 +1158,11 @@ input, select, textarea {
   box-shadow: none;
   border: none;               /* you draw your own underline */
   background-clip: padding-box;
+}
+.skill-extra[disabled] {
+  background: #f4fbff;
+  border: 1px solid #cfe9ff;
+  color: #111;
+  opacity: 1; /* keep it readable */
+  cursor: default;
 }

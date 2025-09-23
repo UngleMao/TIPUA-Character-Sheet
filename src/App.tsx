@@ -1,4 +1,9 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
+
+// Cross-bundler "are we in production?" check (works in Vite/CRA/Node)
+const IS_PROD =
+  (typeof import.meta !== "undefined" && (import.meta as any).env?.PROD === true) ||
+  ((globalThis as any).process?.env?.NODE_ENV === "production");
 
 /** Fate 4dF dice */
 function rollFate(n = 4, mod = 0) {
@@ -44,6 +49,26 @@ const SPECIES_IMG: Record<string, string> = {
   "Pōnāturi | Sea Folk": "/species/ponaturi.png",
   "Patupaiārehe | Forest Folk": "/species/patupaiarehe.png",
 };
+
+// Brief blurbs for the image popup
+const SPECIES_INFO: Record<RaceKey, { title: string; desc: string }> = {
+  "Patupaiārehe | Forest Folk": {
+    title: "Patupaiārehe | Forest Folk",
+    desc:
+      "hailing from the great forested world of Kereruhuahua, Patupaiarehe are mysterious and elusive. Often favouring stealth and misdirection to evade danger. Patupaiarehe reflect their environment - those that dwell in the surface canopy cities are charismatic, often leading trade and negotiations between other ira, while those from the depths of the forests dark embrace, often favour isolation. Patupaiarehe are renown bird hunters and prefer their food uncooked. They have heightened senses which lends toward their mastery of music."
+  },
+  "Pōnāturi | Sea Folk": {
+    title: "Pōnāturi | Sea Folk",
+    desc:
+      "Descendents of the sea, Pōnāturi are well and truly at home in the waters of Kārito where they live in communal settlements along the many river deltas and islands. Here Pōnāturi Pups are raised by elders with great affection. Pulled by the eventual call of distant tides, Pōnāturi adults undertake a rite of passage - traversing a celestial portal to the distant ocean planet Kiri-tātangi, a rough and stormy world where the strongest Pōnāturi are carved through challenges and survival until they return to safer waters. Pōnāturi are regarded as the most reselient ira with strong cultural roots. They are the finest carvers and crafstpeople in the known galaxy."
+  },
+  "Tangata | Human Folk": {
+    title: "Tangata | Human Folk",
+    desc:
+      "Descendents of the original celestial navigators, Tangata have adapted to many worlds throughout the stars, particularly Ruakōpiha where they have adapted to life underground and maintained their ancient traditions. Tangata are hardy and intelligent, often known for their balance of physical strength and spiritual depth. Tangata are regarded for their affinity toward mastering a wide range of skills. They have been both feared for their warfare and praised for their diplomacy."
+  },
+};
+
 type InheritedAhei = { id: string; title: string; desc: string };
 
 const SPECIES_AHEI: Record<string, InheritedAhei[]> = {
@@ -51,36 +76,36 @@ const SPECIES_AHEI: Record<string, InheritedAhei[]> = {
     {
       id: "huna-a-taiao",
       title: "Huna ā Taiao | Hidden in Nature",
-      desc: "You are hard to spot in natural cover. You blend with plants, mist, and shadow, and you move quietly through the bush +2 Block +2 Stealth - when partly hidden. ONCE PER SESSION: Fully vanish to move or escape. ",
+      desc: "You are hard to spot in natural cover. You blend with plants, mist, and shadow, and you move quietly through the bush. ONCE PER SESSION: Fully vanish to move or escape.",
     },
     {
       id: "taurangi-orooro",
       title: "Taurangi Orooro | Voice of Harmony",
-      desc: "Your voice carries a calming, melodic resonance. You can steady allies, ease tensions, and turn hostility aside. +1 Charisma +1 Kaikōrero +1 Takutaku +1 Makutu. ONCE PER SESSION: Captivate one low level NPC for a turn with your voice - they will do as you command ",
+      desc: "Your voice carries a calming, melodic resonance. You can steady allies, ease tensions, and turn hostility aside. ONCE PER SESSION: Captivate one low level NPC for a turn with your voice - they will do as you command ",
     },
   ],
   "Tangata | Human Folk": [
     {
       id: "reo-tupuna",
       title: "Reo Tūpuna | Ancestral Voice",
-      desc: "You carry the strength of your tīpuna. You recall old knowledge, speak with conviction, and inspire resolve. +2 Intelligence +1 Kaikōrero +1 Matakite. ONCE PER SESSION: Call on an ancestor spirit to reveal something hidden or help in battle for one turn",
+      desc: "You carry the strength of your tīpuna. You recall old knowledge, speak with conviction, and inspire resolve. ONCE PER SESSION: Call on an ancestor spirit to reveal something hidden or help in battle for one turn",
     },
     {
       id: "ringa-toi",
       title: "Ringa Toi | Hand of the Maker",
-      desc: "You are a maker and problem solver. You adapt tools, repair on the fly, and craft useful solutions under pressure. +1 Endurance +1 Strength +1 Crafstmanship. +2 Matakite -when interacting with carvings or built spaces. ONCE PER SESSION: Use a passed-down karakia to imbue an object with a Ward or Curse",
+      desc: "You are a maker and a problem solver. You adapt tools, repair on the fly, and craft useful solutions under pressure. Your natural affinity for carving and construction techniques gives you unique insight. ONCE PER SESSION: Use a passed-down karakia to imbue an object with a Ward or Curse",
     },
   ],
   "Pōnāturi | Sea Folk": [
     {
       id: "noho-rua",
       title: "Noho-rua | Lives in Two Worlds",
-      desc: "You move between realms of sea and shore. You read tides, currents, and liminal signs with sharp instinct. While in water +1 Stealth +1 Agility and clear vision. ONCE PER SESSION: Send a deep pulse through the water, knocking nearby enemies off balance",
+      desc: "You move between realms of sea and shore. You read tides, currents, and liminal signs with sharp instinct. You are as comfortable in water as you are on land. ONCE PER SESSION: Send a deep pulse through the water, knocking nearby enemies off balance",
     },
     {
       id: "kiri-matotoru",
       title: "Kiri Mātotoru | Thick Skin",
-      desc: "Your hide is tough and weathered. You endure cold, pressure, and blows that would stagger others. +2 Endurance +2 Block unaffected by environmental conditions. ONCE PER SESSION: Let out a challenging growl that draws all attacks to you - taking only half damage for one turn",
+      desc: "Your hide is tough and weathered. You endure cold, pressure, and blows that would stagger others. You are unaffected by most environmental conditions. ONCE PER SESSION: Let out a challenging growl that draws all attacks to you - taking only half damage for one turn",
     },
   ],
 };
@@ -103,35 +128,35 @@ type OriginAheiMap = Record<RaceKey, Record<OriginKey, InheritedAhei[]>>;
 export const ORIGIN_AHEI: OriginAheiMap = {
   "Patupaiārehe | Forest Folk": {
     "Papakāinga | Village": [
-      { id: "pf-vil-1", title: "Rikoriko | Glimmer in the Dark", desc: "In a forest that never sees full daylight, you were raised among red leaves and moonlit hunts. Here, your teachers were silence and shadow, and your kin, the masters of camouflage and disguise. Living in near darkness you learnt to hunt by your own light. ONCE PER SESSION: emit a bioluminescent pulse that confuses your closest enemies, drawing them in unguarded. +1 Matakite +1 Naturalist." },
+      { id: "pf-vil-1", title: "Rikoriko | Glimmer in the Dark", desc: "In a forest that never sees full daylight, you were raised among red leaves and moonlit hunts. Here, your teachers were silence and shadow, and your kin, the masters of camouflage and disguise. Living in near darkness you learnt to hunt by your own light. ONCE PER SESSION: emit a bioluminescent pulse that confuses your closest enemies, drawing them in unguarded." },
     ],
     "Pokapū | City": [
-      { id: "pf-city-1", title: "Kākāriki | Voice of the Parrot", desc: "High in the canopy of a living giant, among the many voices and diverse visages, you ran as one of the unseen children and vanished from sight before you ever learned to speak. You honed your skills without being caught, the overlapping voices became your camouflage. ONCE PER SESSION: mimic an NPC voice to create a distraction or an opportunity. +2 Stealth when out of cover" },
+      { id: "pf-city-1", title: "Kākāriki | Voice of the Parrot", desc: "High in the canopy of a living giant, among the many voices and diverse visages, you ran as one of the unseen children and vanished from sight before you ever learned to speak. You honed your skills without being caught, the overlapping voices became your camouflage. ONCE PER SESSION: mimic an NPC voice to create a distraction or an opportunity." },
     ],
     "Mōwaho | Outskirts": [
-      { id: "pf-out-1", title: "Pāpaki | Tinkerer's Touch", desc: "Your home groaned with metal and fire. Raised beneath choking smog and bleeding roots, you worked before you walked, earning your breath in the grind. Your understanding of machinery gave you an edge. ONCE PER SESSION: repair or wreck any powered object or structure. +1 Intelligence +1 endurance +1 Craftsmanship" },
+      { id: "pf-out-1", title: "Pāpaki | Tinkerer's Touch", desc: "Your home groaned with metal and fire. Raised beneath choking smog and bleeding roots, you worked before you walked, earning your breath in the grind. Your understanding of machinery gave you an edge. ONCE PER SESSION: repair or wreck any powered object or structure." },
     ],
   },
   "Tangata | Human Folk": {
     "Papakāinga | Village": [
-      { id: "hu-vil-1", title: "Tutū te Pūehu | Stirring Dust", desc: "Below the earth, where soft light blooms and stone walls hum, you tended glowing gardens with steady hands. Your elders assure you that the dark holds no fear, only comfort. You have mastered the art of dirt and dust. ONCE PER SESSION: kick up a cloud for cover or send a spray of grit outward to blind and stagger nearby enemies for one turn. +1 Strength +1 Agility +1 Potions and Poisons +1 Naturalist." },
+      { id: "hu-vil-1", title: "Tutū te Pūehu | Stirring Dust", desc: "Below the earth, where soft light blooms and stone walls hum, you tended glowing gardens with steady hands. Your elders assure you that the dark holds no fear, only comfort. You have mastered the art of dirt and dust. ONCE PER SESSION: kick up a cloud for cover or send a spray of grit outward to blind and stagger nearby enemies for one turn." },
     ],
     "Pokapū | City": [
-      { id: "hu-city-1", title: "Tautohetohe | Debate", desc: "In great halls and star-lit ports, you watched power shift like the wind. Words once masterfully used in the courts of the Paepae, are your weapon - refined in the art of charm, humour, or a well-placed threat. You have picked up the art and power of speech and debate. ONCE PER SESSION: stun or charm any NPC (excluding Ngarara) with an unchecked Makutu. +2 Charisma +2 Kaikōrero." },
+      { id: "hu-city-1", title: "Tautohetohe | Debate", desc: "In great halls and star-lit ports, you watched power shift like the wind. Words once masterfully used in the courts of the Paepae, are your weapon - refined in the art of charm, humour, or a well-placed threat. You have picked up the art and power of speech and debate. ONCE PER SESSION: stun or charm any NPC (excluding Ngarara) with an unchecked Makutu." },
     ],
     "Mōwaho | Outskirts": [
-      { id: "hu-out-1", title: "Pūhiko | Source of Power", desc: "Among the endless potential of forgotten yards and discarded treasure, your mind transformed scrap into wonders and memorised the constellations like old maps. Picking through discarded scrap and combining different parts taught you how to rewire tech to your advantage. ONCE PER SESSION: manipulate tech to  create a temporary protective barrier – everyone within gains +2 block for the next turn. +1 Takutaku +1 Craftsmanship +1 Intelligence" },
+      { id: "hu-out-1", title: "Pūhiko | Source of Power", desc: "Among the endless potential of forgotten yards and discarded treasure, your mind transformed scrap into wonders and memorised the constellations like old maps. Picking through discarded scrap and combining different parts taught you how to rewire tech to your advantage. ONCE PER SESSION: manipulate tech to  create a temporary protective barrier – everyone within gains +2 block for the next turn." },
     ],
   },
   "Pōnāturi | Sea Folk": {
     "Papakāinga | Village": [
-      { id: "po-vil-1", title: "Tūhonohono | Interwoven Connection", desc: "You were raised on a river of mist and ancient whispers. Here, the old ones taught you the ancient knowledge of rites and ceremony. Under the guidance of your elders, you learnt how everything is connected. ONCE PER SESSION: connect with one NPC (excluding Ngārara) to gain extra information or calm things down.. +2 Kaikōrero +1 Potions and Poisons +1 Naturalist" },
+      { id: "po-vil-1", title: "Tūhonohono | Interwoven Connection", desc: "You were raised on a river of mist and ancient whispers. Here, the old ones taught you the ancient knowledge of rites and ceremony. Under the guidance of your elders, you learnt how everything is connected. ONCE PER SESSION: connect with one NPC (excluding Ngārara) to gain extra information or calm things down." },
     ],
     "Pokapū | City": [
-      { id: "po-city-1", title: "Pā-orooro | Reverberating Echo", desc: "In a beautiful city built around a swirling portal, you grew up among mangroves and watchful guards. An environment such as this taught you to move through the world like water through stone. You watched the old guards command with a low rumble and learnt to harness this for yourself. ONCE PER SESSION: emit a low rumble through water to call on nearby small water creatures to aid you. +1 Endurance +1 Strength when in water" },
+      { id: "po-city-1", title: "Pā-orooro | Reverberating Echo", desc: "In a beautiful city built around a swirling portal, you grew up among mangroves and watchful guards. An environment such as this taught you to move through the world like water through stone. You watched the old guards command with a low rumble and learnt to harness this for yourself. ONCE PER SESSION: emit a low rumble through water to call on nearby small water creatures to aid you. " },
     ],
     "Mōwaho | Outskirts": [
-      { id: "po-out-1", title: "Koropuku | Mighty Bellow", desc: "Battered by brutal tides and toothy rivals, you were forged in the rough coral wilds. Quick, scrappy, and fierce, you learned to never hesitate and never flinch. To roar above the crashing waves was a gift you used well, your dominance was heard from great distances. ONCE PER SESSION: let out a mighty bellow that causes any smaller enemies to flee in terror. +2 Strike +2 Block when facing an enemy larger than you" },
+      { id: "po-out-1", title: "Koropuku | Mighty Bellow", desc: "Battered by brutal tides and toothy rivals, you were forged in the rough coral wilds. Quick, scrappy, and fierce, you learned to never hesitate and never flinch. To roar above the crashing waves was a gift you used well, your dominance was heard from great distances. ONCE PER SESSION: let out a mighty bellow that causes any smaller enemies to flee in terror." },
     ],
   },
 };
@@ -152,35 +177,35 @@ export const WHARE_ARONGA: Record<HouseKey, InheritedAhei[]> = {
     {
       id: "Light clarity focus higher learning leadership",
       title: "Pūmārama | Source of Light",
-      desc: "This whare was formed under Moeāhuru and Uru-te-ngangana and embodies the learning of wisdom, diplomacy, and ancient knowledge. Students here train with the Tewhatewha and Kotiate but their focus leans more toward leadership, communication, and managing complex systems. They learn spiritual oratory, leadership, and the responsibilities of guiding entire communities or nations. As keepers of knowledge and tradition, graduates often become Tohunga, negotiators, political leaders, or heads of other whare. ONCE PER SESSION: unleash a radiant light, all allies gain +1 to mental fortitude and takutaku skill checks and all enemies within line of sight suffer -1 to all rolls. +1 Matakite +1 Intelligence",
+      desc: "This whare was formed under Moeāhuru and Uru-te-ngangana and embodies the learning of wisdom, diplomacy, and ancient knowledge. Students here train with the Tewhatewha and Kotiate but their focus leans more toward leadership, communication, and managing complex systems. They learn spiritual oratory, leadership, and the responsibilities of guiding entire communities or nations. As keepers of knowledge and tradition, graduates often become Tohunga, negotiators, political leaders, or heads of other whare. ONCE PER SESSION: unleash a radiant light, all allies gain +1 to mental fortitude and takutaku skill checks and all enemies within line of sight suffer -1 to all rolls.",
     },
   ],
   "Te Whare Māriri": [
     {
       id: "Warfare strategy precision stealth",
       title: "Pouriri | Pillar of War",
-      desc: "This school trains those best suited for combat, leadership, and mental resilience. Founded under the Atua: Hine Keira and Tūmatauenga, it focuses on physical strength, precision, and emotional control. Students learn to wield the Tī and Taiaha, sharpen their strategic thinking, and manage their inner rage without letting it consume them. Spiritual teachings focus on rituals and incantations, helping students maintain balance between the physical and spiritual realms. Those who graduate from this Whare are often leaders in defense, elite fighters, or tacticians within their communities. ONCE PER SESSION: The Player can declare a coordinated attack with an ally. Both Player Characters now attack as one - adding the total outcome of both Players dice rolls. +2 Strike after a successful Matakite Check. +2 Stealth after a succesful Naturalist Check",
+      desc: "This school trains those best suited for combat, leadership, and mental resilience. Founded under the Atua: Hine Keira and Tūmatauenga, it focuses on physical strength, precision, and emotional control. Students learn to wield the Tī and Taiaha, sharpen their strategic thinking, and manage their inner rage without letting it consume them. Spiritual teachings focus on rituals and incantations, helping students maintain balance between the physical and spiritual realms. Those who graduate from this Whare are often leaders in defense, elite fighters, or tacticians within their communities. ONCE PER SESSION: The Player can declare a coordinated attack with an ally. Both Player Characters now attack as one - adding the total outcome of both Players dice rolls.",
     },
   ],
   "Te Whare Ahuone": [
     {
       id: "Healing  gardening  concealment",
       title: "Korowai Whenua | Natures Cloak",
-      desc: "This is the school of peace, growth, and restoration. Guided by the principles of Rongo and Haumia-tiketike, it shapes students into caretakers of the land and healers of people. Their weapons are the Kō and Timotimo, tools used for cultivation and combat. Training is centered on stealth, disarming tactics, and the protection of life. Students are taught environmental karakia and learn how to harmonise with the world around them. Those who complete this path often take on roles in environmental stewardship, medicine, education, or sustainable development. ONCE PER SESSION: completely conceal your party for one turn giving a +3 bonus to any stealth skill checks. +1 Potions/Poisons +1 Craftsmanship +1 Naturalist when in outside environments",
+      desc: "This is the school of peace, growth, and restoration. Guided by the principles of Rongo and Haumia-tiketike, it shapes students into caretakers of the land and healers of people. Their weapons are the Kō and Timotimo, tools used for cultivation and combat. Training is centered on stealth, disarming tactics, and the protection of life. Students are taught environmental karakia and learn how to harmonise with the world around them. Those who complete this path often take on roles in environmental stewardship, medicine, education, or sustainable development. ONCE PER SESSION: completely conceal your party for one turn giving a +3 bonus to any stealth skill checks.",
     },
   ],
   "Te Whare Pōhutukawa": [
     {
       id: "Strength  connection  life  death",
       title: "Mauri Tū | Unyeilding Essence",
-      desc: "This school sits at the intersection of life and death, under Hine-nui-te-pō and Tāne Māhuta. It shapes defenders, protectors, and those who operate with deep spiritual awareness. Students train with Toki Kakauroa and Mere Tūhua, learning to phase between realms and harness sound and energy through music and vibration. Physically, they become strong and resistant, with an emphasis on protective techniques and healing boosts. Their training strengthens both body and spirit, and many go on to become frontline guardians, spiritual warriors, or powerful healers. ONCE PER SESSION: channel the strength of your ancestors and gain +2 to any one roll and also remove 1 mild or moderate physical or mental consequence. +1 Mental Fortitude when protecting an ally +1 Strength when on solid ground.",
+      desc: "This school sits at the intersection of life and death, under Hine-nui-te-pō and Tāne Māhuta. It shapes defenders, protectors, and those who operate with deep spiritual awareness. Students train with Toki Kakauroa and Mere Tūhua, learning to phase between realms and harness sound and energy through music and vibration. Physically, they become strong and resistant, with an emphasis on protective techniques and healing boosts. Their training strengthens both body and spirit, and many go on to become frontline guardians, spiritual warriors, or powerful healers. ONCE PER SESSION: channel the strength of your ancestors and gain +2 to any one roll and also remove 1 mild or moderate physical or mental consequence.",
     },
   ],
   "Te Whare Tahuaroa": [
     {
       id: "Tidal force  speed  fluidity  power",
       title: "Tairere | Surging Tide",
-      desc: "Connected to the tides and deep oceans, this school nurtures speed, fluid movement, and emotional depth. It was established under the power of Hine Moana and Tangaroa, and its students are trained in the Hoeroa and Wahaika. The physical techniques taught here are graceful but powerful, emphasising precision, rhythm, and flexibility. ONCE PER SESSION: rush nearby enemies with the full force of a tidal surge taking no damage and knocking down all minor enemies within line of sight. +1 Strike when moving toward an opponent +1 Block when moving away from a target +1 Agility when in water.",
+      desc: "Connected to the tides and deep oceans, this school nurtures speed, fluid movement, and emotional depth. It was established under the power of Hine Moana and Tangaroa, and its students are trained in the Hoeroa and Wahaika. The physical techniques taught here are graceful but powerful, emphasising precision, rhythm, and flexibility. ONCE PER SESSION: rush nearby enemies with the full force of a tidal surge taking no damage and knocking down all minor enemies within line of sight.",
     },
   ],
 };
@@ -328,6 +353,102 @@ const ALL_SKILLS = [
   "He Tuhi Hara | Makutu/Curses",
 ];
 
+type SkillKey = typeof ALL_SKILLS[number];
+const ALL_SKILLS_SET = new Set(ALL_SKILLS);
+
+function devAssertAheiModsAreValid() {
+if (IS_PROD) return;
+  
+  const badPairs: Array<{ aheiId: string; skillKey: string }> = [];
+  for (const [aheiId, skillMap] of Object.entries(AHEI_MODS)) {
+    for (const skillKey of Object.keys(skillMap)) {
+      if (!ALL_SKILLS_SET.has(skillKey)) {
+        badPairs.push({ aheiId, skillKey });
+      }
+    }
+  }
+  if (badPairs.length) {
+    console.warn(
+      "[Tipua] AHEI_MODS has skill names that don't match ALL_SKILLS exactly:",
+      badPairs
+    );
+  }
+}
+
+// Auto-applied bonuses for each Āhei (by ID)
+// Fill this out over time. Missing IDs default to no bonus.
+const AHEI_MODS: Record<string, Partial<Record<SkillKey, number>>> = {
+  // === SPECIES ===
+  "huna-a-taiao": { // Patupaiārehe
+    "Ika Ūnahi Nui | Block": 2,
+    "He Pātiki Huna | Stealth": 2,
+  },
+  "taurangi-orooro": {
+    "Ngutu-kākā | Charisma": 1,
+    "Korokoro Tūī | Kaikōrero/Linguist": 1,
+    "He Tuhi Hara | Makutu/Curses": 1,
+    "He Ihu Waka | Matakite/Spirit Sight": 1,
+  },
+
+  "reo-tupuna": { // Tangata
+    "He Rūrū Mōhio | Intelligence": 2,
+    "Korokoro Tūī | Kaikōrero/Linguist": 1,
+    "He Ihu Waka | Matakite/Spirit Sight": 1,
+  },
+  "ringa-toi": {
+    "Tokatūmoana | Endurance": 1,
+    "Manawa-tītī | Strength": 1,
+    "Mahi Pūngāwerewere | Craftsmanship": 1,
+    "He Ihu Waka | Matakite/Spirit Sight": 2, // tweak if you want this situational
+  },
+
+  "noho-rua": { // Pōnāturi
+    "He Pātiki Huna | Stealth": 1,
+    "Waewae-kai-kapua | Agility": 1,
+  },
+  "kiri-matotoru": {
+    "Tokatūmoana | Endurance": 2,
+    "Ika Ūnahi Nui | Block": 2,
+  },
+
+  // === ORIGIN (examples) ===
+  "pf-vil-1": { "He Ihu Waka | Matakite/Spirit Sight": 1, "Puawai Kōwhai | Naturalist": 1 },
+  "pf-city-1": { "He Pātiki Huna | Stealth": 2 },
+  "pf-out-1":  { "He Rūrū Mōhio | Intelligence": 1, "Tokatūmoana | Endurance": 1, "Mahi Pūngāwerewere | Craftsmanship": 1 },
+
+  "hu-vil-1":  { "Manawa-tītī | Strength": 1, "Waewae-kai-kapua | Agility": 1, "Karaka Matarua | Rongoā/Potions & Poisons": 1, "Puawai Kōwhai | Naturalist": 1 },
+  "hu-city-1": { "Ngutu-kākā | Charisma": 2, "Korokoro Tūī | Kaikōrero/Linguist": 2 },
+  "hu-out-1":  { "He Tuhi Hara | Makutu/Curses": 1, "Mahi Pūngāwerewere | Craftsmanship": 1, "He Rūrū Mōhio | Intelligence": 1 },
+
+  "po-vil-1":  { "Korokoro Tūī | Kaikōrero/Linguist": 2, "Karaka Matarua | Rongoā/Potions & Poisons": 1, "Puawai Kōwhai | Naturalist": 1 },
+  "po-city-1": { "Tokatūmoana | Endurance": 1, "Manawa-tītī | Strength": 1 },
+  "po-out-1":  { "Hiku o te Ika | Strike": 2, "Ika Ūnahi Nui | Block": 2 },
+
+  // === WHARE ARONGA (examples) ===
+  "Light clarity focus higher learning leadership": {
+    "He Ihu Waka | Matakite/Spirit Sight": 1,
+    "He Rūrū Mōhio | Intelligence": 1,
+  },
+  "Warfare strategy precision stealth": {
+    "Hiku o te Ika | Strike": 2,
+    "He Pātiki Huna | Stealth": 2,
+  },
+  "Healing  gardening  concealment": {
+    "Karaka Matarua | Rongoā/Potions & Poisons": 1,
+    "Mahi Pūngāwerewere | Craftsmanship": 1,
+    "Puawai Kōwhai | Naturalist": 1,
+  },
+  "Strength  connection  life  death": {
+    "Manawa Piharau | Mental Fortitude": 1,
+    "Manawa-tītī | Strength": 1,
+  },
+  "Tidal force  speed  fluidity  power": {
+    "Hiku o te Ika | Strike": 1,
+    "Ika Ūnahi Nui | Block": 1,
+    "Waewae-kai-kapua | Agility": 1,
+  },
+};
+
 
 
 // returns what’s still available for the given slot index
@@ -372,6 +493,12 @@ function generateScatterPositions(
   return positions;
 }
 
+function arraysEqual(a: number[], b: number[]) {
+  if (a === b) return true;
+  if (a.length !== b.length) return false;
+  for (let i = 0; i < a.length; i++) if (a[i] !== b[i]) return false;
+  return true;
+}
 
 
 
@@ -390,6 +517,11 @@ const [origin, setOrigin] = useState<OriginKey | "">("");
 
 const [house, setHouse] = useState<HouseKey | "">("");
 const [weapon, setWeapon] = useState<WeaponKey | "">("");
+
+const [showSpeciesDesc, setShowSpeciesDesc] = useState(false);
+useEffect(() => {
+  setShowSpeciesDesc(false);
+}, [race]);
 
   // Āhei / Stunts
 const [ahei1, setAhei1] = useState("");
@@ -437,6 +569,37 @@ const [showOriginDesc, setShowOriginDesc] = useState(false);
 const [houseAheiId, setHouseAheiId] = useState<string>("");
 const [showArongaDesc, setShowArongaDesc] = useState(false);
 
+const autoMods = useMemo(() => {
+  // include every selected Āhei that should contribute
+  const ids = [
+    inheritedAheiId,   // species
+    originAheiId,      // origin
+    houseAheiId,       // whare specialization
+    ahei1, ahei2, ahei3, // your three free-pick Āhei
+  ].filter((x): x is string => Boolean(x && AHEI_MODS[x]));
+
+  const out: Partial<Record<SkillKey, number>> = {};
+  for (const id of ids) {
+    const src = AHEI_MODS[id];
+    if (!src) continue;
+    for (const [skill, val] of Object.entries(src)) {
+      const k = skill as SkillKey;
+      out[k] = (out[k] ?? 0) + (val ?? 0);
+    }
+  }
+  return out;
+}, [inheritedAheiId, originAheiId, houseAheiId, ahei1, ahei2, ahei3]);
+
+
+useEffect(() => {
+  // for each of the 16 skill rows:
+  // if a skill is chosen, look up its auto bonus; otherwise 0
+  const next = skillChoices.map((s) => (s ? (autoMods[s as SkillKey] ?? 0) : 0));
+
+  // only update if it actually changed
+  setSkillExtras((prev) => (arraysEqual(prev, next) ? prev : next));
+}, [skillChoices, autoMods]);
+
 // Weapon popup toggle
 const [showWeaponDesc, setShowWeaponDesc] = useState(false);
 
@@ -456,7 +619,9 @@ useEffect(() => {
   setShowUltSpir(false);
 }, [weapon]);
 
-
+useEffect(() => {
+    devAssertAheiModsAreValid();
+  }, []);
 
 
 
@@ -631,7 +796,7 @@ useEffect(() => {
 type Rect = { left: number; top: number; width: number; rotate?: number; z?: number };
 type Positions = {
   // identity + artwork
-  name: Rect; race: Rect; origin: Rect; house: Rect; weapon: Rect; speciesImg: Rect;
+  name: Rect; race: Rect; origin: Rect; house: Rect; weapon: Rect; speciesImg: Rect;  speciesPopup: Rect;
   // skills
   skillsTitle: Rect; skillsMod: Rect; skillsBlock: Rect; skillsExtrasBlock: Rect;
   // stress titles + rows
@@ -676,6 +841,7 @@ const positionsDesktop: Positions = {
   house:{left:6,top:14.5,width:22},
   weapon:{left:6,top:20.5,width:22},
   speciesImg:{left:28,top:8,width:18, z: 6 },
+  speciesPopup:{ left:28, top: 6, width: 22 },
   weaponImg:{left:5, top:24, width:18, rotate: 0 },
   weaponPopup: { left: 10, top: 22.5, width: 16 },
 
@@ -748,6 +914,7 @@ const positionsMobile: Positions = {
   house:{left:6,top:14,width:31},
   weapon:{left:6,top:20,width:25},
   speciesImg:{left:32,top:20,width:18, z: 6 },
+  speciesPopup:{ left:32, top: 17, width: 40 },
   weaponImg:{left:10, top:25, width:18},
   weaponPopup: { left: 10, top: 28, width: 30 },
 
@@ -1015,22 +1182,61 @@ return (
       top:   `${pos.speciesImg.top}%`,
       width: `${pos.speciesImg.width}%`,
       zIndex: pos.speciesImg.z ?? 6,
-      pointerEvents: "none", // so it won’t block clicks
     }}
   >
-    <img
-      src={SPECIES_IMG[race]}
-      alt={race}
-      style={{
-        width: "100%",
-        height: "auto",
-        display: "block",
-        filter: "drop-shadow(0 2px 4px rgba(0,0,0,.25))",
-        opacity: 0.98,
-      }}
-    />
+    <div
+      role="button"
+      tabIndex={0}
+      aria-label={`Show ${race} description`}
+      aria-expanded={showSpeciesDesc}
+      onClick={() => setShowSpeciesDesc(s => !s)}
+      onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") setShowSpeciesDesc(s => !s); }}
+      style={{ cursor: "pointer" }}
+    >
+      <img
+        src={SPECIES_IMG[race]}
+        alt={race}
+        style={{
+          width: "100%",
+          height: "auto",
+          display: "block",
+          filter: "drop-shadow(0 2px 4px rgba(0,0,0,.25))",
+          opacity: 0.98,
+          pointerEvents: "none",
+        }}
+      />
+    </div>
   </div>
 )}
+{race && showSpeciesDesc && SPECIES_INFO[race] && (
+  <div
+    className="field overlay-wrap overlay-wrap--species open"
+    style={{
+      left:  `${pos.speciesPopup.left}%`,
+      top:   `${pos.speciesPopup.top}%`,
+      width: `${pos.speciesPopup.width}%`,
+      zIndex: 28,
+    }}
+  >
+    <div className="overlay-box overlay-box--species">
+      <div style={{ display: "flex", justifyContent: "space-between", gap: 8 }}>
+        <strong>{SPECIES_INFO[race].title}</strong>
+        <button
+          className="btn"
+          onClick={() => setShowSpeciesDesc(false)}
+          aria-label="Close species info"
+          style={{ padding: "2px 6px" }}
+        >
+          ✕
+        </button>
+      </div>
+      <div className="ahei-desc" style={{ marginTop: 6 }}>
+        {SPECIES_INFO[race].desc}
+      </div>
+    </div>
+  </div>
+)}
+
 
 
 
@@ -1313,19 +1519,15 @@ return (
       <div key={i} className="extra-row">
         <input
   type="text"
-  inputMode="numeric"
-  pattern="-?[0-9]*"
   className="skill-extra"
-  value={String(skillExtras[i] ?? 0)}
-  onChange={(e) => {
-    const raw = e.target.value.trim();
-    const next = [...skillExtras];
-    next[i] = raw === "" || raw === "-" ? 0 : (parseInt(raw, 10) || 0);
-    setSkillExtras(next);
-  }}
-  onFocus={(e) => e.currentTarget.select()}
+  value={skillChoices[i] ? String(skillExtras[i] ?? 0) : ""} // blank until a skill is chosen
+  disabled
+  readOnly
+  aria-label="Auto modifier from Āhei"
+  title="Auto modifier from Āhei"
   placeholder="0"
 />
+
 
 
       </div>
