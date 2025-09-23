@@ -218,13 +218,13 @@
   display: flex;
   align-items: center;
   gap: 6px;          /* space between dropdown and base value */
-  margin-bottom: 8px;
+  margin-bottom: 10px;
   width: 400px;
 
   
 }
 .skill-row select {
-  padding: 9.2px 10px;   /* same as .skill-base */
+  padding: 9.2px 12px;   /* same as .skill-base */
 }
 
 
@@ -323,7 +323,7 @@
 
   .skill-row {
     gap: 2px;              /* less horizontal spacing */
-    margin-bottom: px;    /* tighter vertical spacing */
+    
     width: 160%;            /* shrink row width */
   }
 }
@@ -612,13 +612,7 @@
   margin-right: 4px;
 }
 
-.consequence-input {
-  flex: 1;
-  border: none;
-  border-bottom: 1px solid #333;
-  background: transparent;
-  padding: 2px 3px;
-}
+
 @media (max-width: 640px) {
   .consequence-box {
     padding: 1px 2px;       /* tighter padding */
@@ -633,4 +627,542 @@
     font-size: 10px;
     padding: 1px 2px;
   }
+}
+/* ONLY touch the Āpitihanga (extras) column */
+.extras-column .extra-row {
+  height: 43px;               /* force consistent row height */
+  display: flex;
+  align-items: center;
+}
+
+.extras-column .extra-row .skill-extra {
+  height: 100%;
+  line-height: 26px;
+  font-size: 14px;
+  padding: 0 6px;
+  box-sizing: border-box;
+}
+/* Optional: adjust on mobile separately */
+@media (max-width: 640px) {
+  .extras-column .extra-row { height: 14.7px; }
+  .extras-column .extra-row .skill-extra {
+    line-height: 24px;
+    font-size: 10px;
+    padding: 8px;
+  }
+}
+/* Locked inherited ahei display */
+
+
+
+.ahei-empty {
+  font-size: 12px;
+  opacity: 0.75;
+  padding: 4px 0;
+}
+
+.ahei-view .ahei-title {
+  font-weight: 800;
+  margin-bottom: 4px;
+  letter-spacing: 0.2px;
+}
+
+/* NEW */
+.ahei-desc { font-size: 13px; line-height: 1.25; }
+@media (max-width: 640px) { .ahei-desc { font-size: 10px; } }
+
+
+/* Mobile toggle for the inherited Āhei description */
+.toggle-desc {
+  margin-top: 4px;
+  padding: 4px 6px;
+  font-size: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: #fff;
+  cursor: pointer;
+}
+
+
+
+/* The description is visible whenever the box is rendered */
+.ahei-locked .ahei-desc { display: block; }
+
+
+/* Phones (<=640px): hide desc by default, show when .open. Show the button. */
+@media (max-width: 640px) {
+  .ahei-locked .ahei-desc { display: none; }
+  .ahei-locked.open .ahei-desc { display: block; }
+  .toggle-desc { display: inline-block; }
+}
+
+
+
+/* --- Force the mobile toggle to show and be clickable --- */
+@media (max-width: 640px) {
+  .btn.toggle-desc {
+    display: inline-block !important;
+    position: relative;
+    z-index: 1000;
+    outline: 1px dashed transparent; /* change to 'red' to debug visually */
+  }
+  /* hide description by default on phones, show when .open */
+  .ahei-locked .ahei-desc { display: none !important; }
+  .ahei-locked.open .ahei-desc { display: block !important; }
+}
+
+
+.btn.toggle-desc { outline: 1px dashed red !important; }
+
+/* On phones: start collapsed; show content only when open */
+@media (max-width: 640px) {
+  /* Neutralize old rules that used .open class */
+  .ahei-locked .ahei-desc { display: none !important; }
+   .ahei-desc { display: block !important; }
+}
+
+
+  
+
+
+/* Optional: chevron + rotate on open */
+.ahei-locked > ::before {
+  content: "▸";
+  display: inline-block;
+  margin-right: 6px;
+  transition: transform .15s ease;
+}
+.ahei-locked[open] > :before {
+  transform: rotate(90deg);
+}
+
+/* If you want the button aligned right */
+.ahei-locked { text-align: left; }
+
+/* MOBILE: make the details panel overlay other fields when open */
+
+  
+  
+
+/* Compact "Show details" control */
+
+.btn.toggle-desc {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 6px;     /* ↓ shrink vertical/horizontal padding */
+  line-height: 1;       /* ↓ prevents tall line box */
+  font-size: 10px;      /* tweak to taste */
+  border-radius: 4px;
+  min-height: 0;        /* cancel any UA min height */
+}
+
+/* Even tighter on phones */
+@media (max-width: 640px) {
+  
+  .btn.toggle-desc {
+    padding: 1px 5px;
+    font-size: 11px;
+  }
+}
+
+/* If you're using <summary>, hide the default marker */
+:-webkit-details-marker { display: none; }
+:marker { content: ""; }
+/* Desktop (>=641px) */
+
+
+/* Desktop only */
+@media (min-width: 641px) {
+  .ahei-locked { 
+    width: 120%;          /* or a fixed/max width just for desktop */
+    max-width: none;      /* e.g., max-width: 560px; if you want a cap */
+    margin-inline: 0;     /* undo any centering from mobile */
+  }
+  .ahei-locked.open {     /* if you use overlay style while open */
+    width: 100%;
+    max-width: none;
+  }
+}
+
+/* Mobile only (your narrower setting) */
+@media (max-width: 640px) {
+  .ahei-locked,
+  .ahei-locked.open {
+    width: 80%;
+    margin-inline: auto;  /* center on mobile */
+  }
+}
+/* Put this near the END of your CSS file */
+.ahei-locked,
+.ahei-locked.open {
+  background-color: #fff;   /* solid white, no alpha */
+}
+.ahei-locked,
+.ahei-locked.open {
+  background: #fff !important;   /* solid */
+}
+/* 1) Make the open/toggled description box SOLID and elevated */
+.ahei-locked.open {
+  background: #fff !important;          /* solid white */
+  box-shadow: 0 8px 24px rgba(0,0,0,.25) !important;
+}
+
+
+/* 3) Prevent parent clipping and provide a positioning context */
+.sheet-wrap,
+.sheet {
+  position: relative;                    /* establish positioning context */
+  overflow: visible;                     /* allow overlay to spill over */
+}
+
+
+
+
+
+/* Container shouldn’t clip overlays */
+.sheet-wrap,
+.sheet {
+  position: relative;
+  overflow: visible;
+}
+.ahei-locked { background: #fff; }
+
+
+@media (max-width: 640px) {
+  .ahei-locked:not(.open) { display: none; }/* collapse desc on mobile when closed */
+}
+.sheet { position: relative; z-index: 0; }
+.field { position: absolute; }
+/* Base stacking context */
+.sheet { position: relative; z-index: 0; }
+
+/* All positioned fields live under titles/overlays by default */
+.field { position: absolute; z-index: 1; }
+
+/* Titles a touch higher if needed */
+.title { z-index: 3; }
+
+/* Toggle button wrapper LOWER than most things */
+.field--toggle { z-index: 2; }
+
+/* Dice / other panels (if you want them above normal fields) */
+.panel, .dice-panel { z-index: 8; }
+
+/* === AHEI TOGGLES & OVERLAYS — CANONICAL === */
+
+/* Base stacking */
+.sheet { position: relative; z-index: 0; }
+.field { position: absolute; z-index: 1; }
+.title { z-index: 3; }        /* titles above normal fields */
+.panel, .dice-panel { z-index: 8; }  /* dice panel, etc. */
+
+/* Toggle button (always visible on all breakpoints) */
+.btn.toggle-desc {
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  padding: 2px 6px;
+  font-size: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: #fff;
+  cursor: pointer;
+  position: relative;   /* default stacking */
+  z-index: auto;        /* default stacking */
+}
+
+/* Optional: wrapper for toggle position fields */
+.field--toggle { z-index: 2; }
+
+/* Overlays: hidden by default; shown when JS adds .open */
+.field.overlay-wrap { position: absolute; display: none; }
+.field.overlay-wrap.open { display: block; }
+
+/* Give each overlay its own z-plane so they never clash */
+.field.overlay-wrap--inherited { z-index: 15; } /* Mana Tuku Iho */
+.field.overlay-wrap--origin    { z-index: 14; } /* Mana a Rohe */
+
+/* The actual description box */
+.overlay-box {
+  background: #fff;                 /* solid, no transparency */
+  border: 2px solid #111;
+  border-radius: 8px;
+  box-shadow: 0 6px 16px rgba(0,0,0,.25);
+  padding: 10px 12px;
+  max-height: 220px;
+  overflow: auto;
+}
+
+/* Keep the inline “locked” box (if you still use it elsewhere) solid too */
+.ahei-locked {
+  border: 2px solid #111;
+  border-radius: 6px;
+  background: #fff;                 /* solid background */
+  padding: 8px 10px;
+}
+
+/* Text inside both overlays */
+.ahei-desc { font-size: 13px; line-height: 1.25; }
+@media (max-width: 640px) { .ahei-desc { font-size: 10px; } }
+
+/* === FORCE TOGGLES TO SHOW ON DESKTOP & MOBILE === */
+.btn.toggle-desc {
+  display: inline-flex !important;   /* beat earlier display:none rules */
+  position: relative;
+  z-index: 2;                        /* below overlays (which are 13/14/15) */
+}
+
+/* Keep overlays above the buttons when opened */
+.overlay-wrap--inherited { z-index: 14; }
+.overlay-wrap--origin    { z-index: 13; }   /* or 15 if you want it on top */
+
+
+@media (max-width: 640px) {
+  .extras-column .extra-row { height: 18px; }  /* slimmer than 24px */
+  .skill-extra {
+    width: 18px;          /* small but still tappable */
+    font-size: 10px;      /* matches rest of mobile text scale */
+    padding: 2px;         /* less inner space */
+  }
+}
+/* === Mobile row-height sync (keep widths) === */
+@media (max-width: 640px) {
+  :root {
+    --rowH-mobile: 16px;   /* tweak 14–18px to taste */
+    --rowFont-mobile: 9px; /* keep text crisp but small */
+  }
+
+  /* Skills dropdowns (left column) */
+  .skills-column .skill-row { margin-bottom: 4.5px; }
+  .skills-column .skill-row select {
+    height: var(--rowH-mobile) !important;
+    line-height: var(--rowH-mobile) !important;
+    padding: 0 2px !important;
+    font-size: var(--rowFont-mobile) !important;
+  }
+
+  /* Base value box beside each select */
+  .skill-base {
+    height: var(--rowH-mobile) !important;
+    line-height: var(--rowH-mobile) !important;
+    padding: 0 2px !important;
+    font-size: var(--rowFont-mobile) !important;
+  }
+
+  /* Extras column (right) — match the same row height */
+  .extras-column .extra-row {
+    height: var(--rowH-mobile) !important;
+  }
+  .extras-column .extra-row .skill-extra {
+    height: 100% !important;
+    line-height: var(--rowH-mobile) !important;
+    width: 16px !important;           /* stays narrow */
+    font-size: var(--rowFont-mobile) !important;
+    padding: 0 2px !important;
+  }
+}
+/* Default (desktop ≥ 641px): top-right inside the scatter box */
+.dice-total {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  font-size: 20px;
+  font-weight: 700;
+  padding: 6px 8px;
+  background: rgba(109, 233, 255, 0.75);
+  border-radius: 4px;
+  z-index: 2;          /* stays above dice */
+}
+/* Mobile (≤ 640px): bottom-center inside the scatter box */
+@media (max-width: 640px) {
+  .dice-total {
+    top: auto;
+    right: auto;
+    bottom: 6px;
+    left: 100%;
+    transform: translateX(-50%);
+    font-size: 16px;
+    padding: 4px 6px;
+  }
+}
+.dice-total {
+  text-align: center;
+  margin-top: 8px;         /* space above Roll button */
+  font-size: 20px;
+  font-weight: 700;
+  background: rgba(109, 233, 255, 0.75);
+  border-radius: 4px;
+  padding: 6px 8px;
+}
+
+/* Mobile override */
+@media (max-width: 640px) {
+  .dice-total {
+    font-size: 16px;
+    padding: 4px 6px;
+    margin-top: 6px;      /* a bit tighter on phones */
+  }
+}
+
+/* Weapon popup overlay */
+.overlay-wrap--weapon { z-index: 28; }
+
+.overlay-box--weapon {
+  background: #fff;
+  border: 2px solid #111;
+  border-radius: 8px;
+  box-shadow: 0 6px 16px rgba(0,0,0,.25);
+  padding: 10px 12px;
+  max-height: 240px;
+  overflow: auto;
+}
+.field.overlay-wrap { position: absolute; display: none; }
+.field.overlay-wrap.open { display: block; }
+
+/* --- Weapon popup: subtle slide-in --- */
+.overlay-wrap--weapon.open .overlay-box--weapon {
+  animation: weaponSlideIn 180ms cubic-bezier(.2,.7,.2,1) both;
+  will-change: transform, opacity;
+}
+
+/* Desktop: slide in from the right (toward the image), a little lift */
+@keyframes weaponSlideIn {
+  from {
+    transform: translateX(12px) translateY(0) scale(0.995);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0) translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+/* Mobile: slightly shorter distance so it feels snappy on small screens */
+@media (max-width: 640px) {
+  .overlay-wrap--weapon.open .overlay-box--weapon {
+    animation-duration: 140ms;
+  }
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .overlay-wrap--weapon.open .overlay-box--weapon {
+    animation: none;
+  }
+}
+
+/* Ultimate overlays — look/feel like other ability popups */
+.field.overlay-wrap--ult { display: none; position: absolute; }
+.field.overlay-wrap--ult.open { display: block; }
+
+.overlay-box--ult {
+  background: #fff;
+  border: 2px solid #111;
+  border-radius: 8px;
+  box-shadow: 0 6px 16px rgba(0,0,0,.25);
+  padding: 10px 12px;
+  max-height: 220px;
+  overflow: auto;
+}
+
+/* Make sure these float above the toggle button */
+.field.overlay-wrap--ult { z-index: 22; }
+
+/* Optional: subtle slide like your weapon popup */
+.overlay-wrap--ult.open .overlay-box--ult {
+  animation: ultSlideIn 160ms cubic-bezier(.2,.7,.2,1) both;
+}
+@keyframes ultSlideIn {
+  from { transform: translateY(-6px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .overlay-wrap--ult.open .overlay-box--ult { animation: none; }
+}
+
+/* Make disabled selects look like normal āhei dropdowns */
+.select-underline:disabled {
+  opacity: 1;
+  color: #000;
+  -webkit-text-fill-color: #000; /* Safari */
+  background: rgba(255, 255, 255, 0.5);
+  cursor: default;
+}
+
+/* Make disabled selects look like normal āhei dropdowns */
+.select-underline:disabled {
+  opacity: 1;
+  color: #000;
+  -webkit-text-fill-color: #000; /* Safari */
+  background: rgba(255, 255, 255, 0.5);
+  cursor: default;
+}
+.select-underline:disabled {
+  border-bottom-color: #000; /* match enabled state */
+}
+/* Match your enabled select’s padding exactly */
+.select-underline {
+  padding: 2px 2px 3px 2px;
+}
+.select-underline:disabled {
+  padding: 2px 2px 3px 2px;
+}
+/* consistent text sizing on iOS */
+html { -webkit-text-size-adjust: 100%; }
+
+/* prevent iOS zoom jump on tap for inputs/selects */
+@supports (-webkit-touch-callout: none) {
+  input, select, textarea, button {
+    font-size: 16px; /* iOS won't zoom if >=16px */
+  }
+}
+/* flatten Safari-specific control chrome */
+input, select, textarea, button {
+  -webkit-appearance: none;
+  appearance: none;
+  border-radius: 4px; /* keep your rounded look */
+}
+
+/* keep disabled selects visually identical */
+.select-underline:disabled {
+  -webkit-text-fill-color: #000;
+}
+/* global font rendering smoothing */
+html, body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* headings/labels: nail line-height so wrapping doesn't surprise you */
+.field-label,
+.mini-label,
+.ult-label,
+.ahei-desc {
+  line-height: 1.2; /* or 1.15 – pick one and keep it consistent */
+  letter-spacing: 0; /* Safari sometimes renders spacing slightly wider */
+}
+/* ensure overlays are really solid layers */
+.overlay-box,
+.overlay-box--weapon,
+.overlay-box--ult {
+  background: #fff !important;
+}
+.sheet { position: relative; }         /* the reference */
+.field { position: absolute; }         /* children place via left/top % */
+/* contain content to the visual viewport */
+@supports (-webkit-touch-callout: none) {
+  body { overflow-x: hidden; }
+}
+input, select, textarea {
+  box-shadow: none;
+  border: none;               /* you draw your own underline */
+  background-clip: padding-box;
+}
+.skill-extra[disabled] {
+  background: #f4fbff;
+  border: 1px solid #cfe9ff;
+  color: #111;
+  opacity: 1; /* keep it readable */
+  cursor: default;
 }

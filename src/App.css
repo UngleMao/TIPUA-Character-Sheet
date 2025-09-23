@@ -40,3 +40,38 @@
 .read-the-docs {
   color: #888;
 }
+/* Base stress title size (desktop default) */
+.title--stress .field-label {
+  font-size: clamp(14px, 2.0vw, 18px);
+  line-height: 1.05;
+  margin: 0;
+}
+
+/* Locked inherited ahei display */
+.ahei-locked {
+  margin-top: 6px;
+  border: 2px solid #111;
+  border-radius: 6px;
+  background: rgba(255,255,255,0.6);
+  padding: 8px 10px;
+}
+
+.ahei-empty {
+  font-size: 12px;
+  opacity: 0.75;
+  padding: 4px 0;
+}
+
+.ahei-view .ahei-title {
+  font-weight: 800;
+  margin-bottom: 4px;
+  letter-spacing: 0.2px;
+}
+
+.ahei-view .ahei-desc {
+  font-size: 13px;
+  line-height: 1.25;
+}
+@media (max-width: 640px) {
+  .ahei-view .ahei-desc { font-size: 10px; }
+}
